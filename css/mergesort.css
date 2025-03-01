@@ -449,17 +449,15 @@ input[type="number"]:focus {
     min-height: 400px;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: calc(100% - 60px) !important; /* Changed from 100% to calc(100% - 60px) */
     margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
     isolation: isolate;
     overflow: auto;
     border: 1px solid rgba(0,0,0,0.05);
     transition: all 0.3s ease;
     animation: fadeIn 1.2s ease-out forwards;
-}
-
-.tree-view:hover {
-    box-shadow: var(--shadow-strong);
 }
 
 /* Enhanced tree view header */
@@ -474,16 +472,10 @@ input[type="number"]:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: calc(100% - 60px);
+    /* width: calc(100% - 60px); */ /* Keep this relative to container */
     box-shadow: var(--shadow-subtle);
     left: 20px;
-    border-radius: 8px 8px 0 0;
-}
-
-.tree-view-header h3 {
-    margin: 0;
-    padding: 0;
-    position: relative;
+    border-radius: 8px 8px 8px 8px;
 }
 
 /* Divide tree specific styling */
@@ -676,15 +668,15 @@ input[type="number"]:focus {
 .zoom-controls-wrapper {
     position: sticky;
     bottom: 0;
-    padding-bottom: 25px;
-    width: calc(100% - 40px); 
+    padding-top: 25px;
+    width: calc(100% - 40px);
     margin: 0;
     display: flex;
     justify-content: center;
-    pointer-events: none; 
-    z-index: 30; 
+    pointer-events: none;
+    z-index: 30;
     background: linear-gradient(to top, rgba(255, 255, 255, 0.9) 50%, transparent);
-    left: 20px; 
+    left: 20px;
 }
 
 .zoom-controls {

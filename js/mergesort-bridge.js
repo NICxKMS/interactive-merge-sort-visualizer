@@ -265,21 +265,21 @@ function updateLayoutForViewport() {
     });
     
     // Update tree view heights if needed
-    const treeViews = document.querySelectorAll('.tree-view');
-    treeViews.forEach(view => {
-        // Set minimum height based on content and viewport
-        const contentHeight = view.scrollHeight;
-        const minHeight = Math.min(contentHeight, viewportHeight * 0.7);
-        view.style.minHeight = `${Math.max(300, minHeight)}px`;
-    });
+    // const treeViews = document.querySelectorAll('.tree-view');
+    // treeViews.forEach(view => {
+    //     // Set minimum height based on content and viewport
+    //     const contentHeight = view.scrollHeight;
+    //     const minHeight = Math.min(contentHeight, viewportHeight * 0.7);
+    //     view.style.minHeight = `${Math.max(300, minHeight)}px`;
+    // });
     
     // Update header and controls positioning
-    const headers = document.querySelectorAll('.tree-view-header');
-    headers.forEach(header => {
-        // Ensure header width matches its container
-        const parentWidth = header.parentElement.clientWidth;
-        header.style.width = `calc(${parentWidth}px - 40px)`;
-    });
+    // const headers = document.querySelectorAll('.tree-view-header');
+    // headers.forEach(header => {
+    //     // Ensure header width matches its container
+    //     const parentWidth = header.parentElement.clientWidth;
+    //     // header.style.width = `calc(${parentWidth}px - 40px)`;
+    // });
 }
 
 // Start sorting process
