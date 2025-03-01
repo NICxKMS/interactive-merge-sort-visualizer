@@ -1,4 +1,3 @@
-
 /**
  * Core utility functions for the merge sort visualization
  */
@@ -16,17 +15,23 @@ function initArray() {
     }
 }
 
-// Create a bar element for visualization
+// Modify the existing createBar function to add animation
 function createBar(value) {
     let bar = document.createElement('div');
     bar.className = 'bar';
-    bar.style.height = (value * 2) + 'px';
+    bar.style.height = '0px'; // Start with height 0 for animation
     
     let label = document.createElement('span');
     label.className = 'barLabel';
     label.textContent = value;
     bar.appendChild(label);
     visualization.appendChild(bar);
+    
+    // Animate the bar height after adding to DOM
+    setTimeout(() => {
+        bar.style.height = (value * 2) + 'px';
+        bar.style.transition = 'height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    }, 10);
 }
 
 // Utility: Sleep for animation delay with pause support

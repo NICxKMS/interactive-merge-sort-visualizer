@@ -182,6 +182,115 @@ function initializeMergeSortVisualizer() {
     sizeUpdateBtn = document.getElementById('sizeUpdate');
     pauseResumeBtn = document.getElementById('pauseResumeBtn');
     
+    // Initialize tree containers with proper dimensions for visual consistency
+    const setupTreeContainers = () => {
+        // Match containers width
+        const containerWidth = document.querySelector('.container').offsetWidth;
+        const treeViews = document.querySelectorAll('.tree-view');
+        
+        treeViews.forEach(view => {
+            // Set width proportional to container but with padding
+            view.style.width = 'calc(100% - 40px)';
+            
+            // Add welcome animations
+            const header = view.querySelector('.tree-view-header');
+            if (header) {
+                header.style.animation = 'fadeIn 0.8s ease-out forwards';
+                header.style.opacity = '0';
+                setTimeout(() => { header.style.opacity = '1'; }, 100);
+            }
+        });
+        
+        // Add hover effect to empty tree containers to suggest interactivity
+        [divideTreeContainer, mergeTreeContainer].forEach(container => {
+            container.addEventListener('mouseenter', function() {
+                if (this.children.length === 0) {
+                    this.style.transform = 'scale(1.01)';
+                    this.style.transition = 'transform 0.3s ease';
+                }
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                if (this.children.length === 0) {
+                    this.style.transform = 'scale(1)';
+                }
+            });
+        });
+    };
+    
+    // Initialize visualization appearance
+    const initializeVisuals = () => {
+        // Add a pulsing effect to the start button to draw attention
+        const startBtn = document.getElementById('startSortBtn');
+        if (startBtn) {
+            // Remove pulse animation after first click
+            startBtn.addEventListener('click', function() {
+                this.style.animation = 'none';
+            }, { once: true });
+        }
+        
+        // Initialize array with visually pleasing pattern instead of random
+        // This makes the initial state more interesting
+        initArrayWithPattern();
+    };
+    
+    // Initialize array with a pattern (ascending, descending, or other pattern)
+    function initArrayWithPattern() {
+        array = [];
+        visualization.innerHTML = '';
+        const arraySize = parseInt(arraySizeControl.value);
+        
+        // Create an array with a visually interesting pattern
+        let pattern = Math.floor(Math.random() * 4); // 0-3 for different patterns
+        
+        switch (pattern) {
+            case 0: // Ascending
+                for (let i = 0; i < arraySize; i++) {
+                    let value = Math.floor(10 + (i * (80 / arraySize))) + Math.floor(Math.random() * 10);
+                    array.push(value);
+                }
+                break;
+                
+            case 1: // Descending
+                for (let i = 0; i < arraySize; i++) {
+                    let value = Math.floor(90 - (i * (80 / arraySize))) + Math.floor(Math.random() * 10);
+                    array.push(value);
+                }
+                break;
+                
+            case 2: // Mountain pattern
+                let mid = arraySize / 2;
+                for (let i = 0; i < arraySize; i++) {
+                    let distFromMid = Math.abs(i - mid) / mid;
+                    let value = Math.floor((1 - distFromMid) * 80) + 10 + Math.floor(Math.random() * 10);
+                    array.push(value);
+                }
+                break;
+                
+            case 3: // Valley pattern
+                let mid2 = arraySize / 2;
+                for (let i = 0; i < arraySize; i++) {
+                    let distFromMid = Math.abs(i - mid2) / mid2;
+                    let value = Math.floor(distFromMid * 80) + 10 + Math.floor(Math.random() * 10);
+                    array.push(value);
+                }
+                break;
+                
+            default: // Random
+                for (let i = 0; i < arraySize; i++) {
+                    let value = Math.floor(Math.random() * 80) + 10;
+                    array.push(value);
+                }
+        }
+        
+        // Create bars with animation
+        array.forEach((val, idx) => {
+            setTimeout(() => {
+                createBar(val);
+            }, idx * 50); // Staggered animation
+        });
+    }
+    
     // Initialize scale data attributes for proper connection positions
     divideTreeContainer.dataset.scale = '1';
     mergeTreeContainer.dataset.scale = '1';
@@ -196,8 +305,9 @@ function initializeMergeSortVisualizer() {
     // Initialize layout for current viewport
     updateLayoutForViewport();
     
-    // Initialize the array visualization
-    initArray();
+    // Now call our new initialization functions
+    setupTreeContainers();
+    initializeVisuals();
 }
 
 // Execute initialization when the DOM is fully loaded
