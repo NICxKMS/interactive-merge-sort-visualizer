@@ -1,4 +1,3 @@
-
 /**
  * Visualization functions for the merge sort
  * Handles rendering, animations, and UI updates.
@@ -192,12 +191,7 @@ function updateConnectionPosition(connection, parentNode, childNode) {
         const childX = childRect.left - containerRect.left;
         const childY = childRect.top - containerRect.top;
         const childWidth = childRect.width;
-        
-        // Calculate connection points
-        const parentCenterX = parentX + (parentWidth / 2);
-        const parentBottomY = parentY + parentHeight;
-        const childCenterX = childX + (childWidth / 2);
-        const childTopY = childY;
+        const childHeight = childRect.height;
         
         // Position the connection
         connection.style.position = "absolute";
@@ -216,19 +210,45 @@ function updateConnectionPosition(connection, parentNode, childNode) {
         // Create path with arrow marker
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.classList.add('connection-path', connectionType);
-        path.setAttribute("marker-end", `url(#arrowhead-${connectionType})`);
         
-        // Calculate control points for a nice curve
-        const verticalDistance = childTopY - parentBottomY;
-        const midpointY = parentBottomY + (verticalDistance * 0.5);
-        
-        // Path data with control points for smooth curve
-        const pathData = `M ${parentCenterX} ${parentBottomY} ` + 
-                       `C ${parentCenterX} ${midpointY}, ` + 
-                       `${childCenterX} ${midpointY}, ` + 
-                       `${childCenterX} ${childTopY}`;
-        
-        path.setAttribute("d", pathData);
+        // Special handling for merge phase - reverse arrow direction
+        if (connectionType === 'merge') {
+            // For merge phase, draw arrow from child to parent (upward direction)
+            const childCenterX = childX + (childWidth / 2);
+            const childTopY = childY;
+            const parentCenterX = parentX + (parentWidth / 2);
+            const parentBottomY = parentY + parentHeight;
+            
+            const verticalDistance = childTopY - parentBottomY;
+            const midpointY = parentBottomY + (verticalDistance * 0.5);
+            
+            // Path data with control points for smooth curve (reversed direction)
+            const pathData = `M ${childCenterX} ${childTopY} ` + 
+                          `C ${childCenterX} ${midpointY}, ` + 
+                          `${parentCenterX} ${midpointY}, ` + 
+                          `${parentCenterX} ${parentBottomY}`;
+            
+            path.setAttribute("d", pathData);
+            path.setAttribute("marker-end", `url(#arrowhead-${connectionType})`);
+        } else {
+            // For divide phase and others, keep original top-down arrow direction
+            const parentCenterX = parentX + (parentWidth / 2);
+            const parentBottomY = parentY + parentHeight;
+            const childCenterX = childX + (childWidth / 2);
+            const childTopY = childY;
+            
+            const verticalDistance = childTopY - parentBottomY;
+            const midpointY = parentBottomY + (verticalDistance * 0.5);
+            
+            // Path data with control points for smooth curve (original direction)
+            const pathData = `M ${parentCenterX} ${parentBottomY} ` + 
+                          `C ${parentCenterX} ${midpointY}, ` + 
+                          `${childCenterX} ${midpointY}, ` + 
+                          `${childCenterX} ${childTopY}`;
+            
+            path.setAttribute("d", pathData);
+            path.setAttribute("marker-end", `url(#arrowhead-${connectionType})`);
+        }
         
         // Add animation for new connections
         if (!connection.hasChildNodes()) {

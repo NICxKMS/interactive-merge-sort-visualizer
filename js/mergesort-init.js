@@ -126,7 +126,7 @@ function setupSvgDefinitions() {
         
         const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
         
-        // Create markers for each connection type
+        // Create markers for each connection type with increased size
         const types = [
             { id: "arrowhead-divide", color: "var(--divide-color)" },
             { id: "arrowhead-merge", color: "var(--merge-color)" },
@@ -137,15 +137,17 @@ function setupSvgDefinitions() {
         types.forEach(type => {
             const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
             marker.setAttribute("id", type.id);
-            marker.setAttribute("markerWidth", "10");
-            marker.setAttribute("markerHeight", "7");
-            marker.setAttribute("refX", "9");
-            marker.setAttribute("refY", "3.5");
+            // Increase marker size by 40%
+            marker.setAttribute("markerWidth", "14"); // Increased from 10
+            marker.setAttribute("markerHeight", "10"); // Increased from 7
+            marker.setAttribute("refX", "12"); // Increased from 9
+            marker.setAttribute("refY", "5"); // Increased from 3.5
             marker.setAttribute("orient", "auto");
-            marker.setAttribute("markerUnits", "userSpaceOnUse"); // Better for zooming
+            marker.setAttribute("markerUnits", "userSpaceOnUse");
             
             const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-            polygon.setAttribute("points", "0 0, 10 3.5, 0 7");
+            // Scale up the polygon points for a larger arrow
+            polygon.setAttribute("points", "0 0, 14 5, 0 10"); // Scaled up from "0 0, 10 3.5, 0 7"
             polygon.setAttribute("fill", type.color);
             
             marker.appendChild(polygon);
