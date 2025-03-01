@@ -138,17 +138,16 @@ function setupSvgDefinitions() {
             const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
             marker.setAttribute("id", type.id);
             // Increase marker size by 40%
-            marker.setAttribute("markerWidth", "14"); // Increased from 10
-            marker.setAttribute("markerHeight", "10"); // Increased from 7
-            marker.setAttribute("refX", "12"); // Increased from 9
-            marker.setAttribute("refY", "5"); // Increased from 3.5
+            marker.setAttribute("markerWidth", "28");  // Doubled from 14
+            marker.setAttribute("markerHeight", "20"); // Doubled from 10
+            marker.setAttribute("refX", "24");         // Doubled from 12
+            marker.setAttribute("refY", "10");         // Doubled from 5
             marker.setAttribute("orient", "auto");
             marker.setAttribute("markerUnits", "userSpaceOnUse");
             
             const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
             // Scale up the polygon points for a larger arrow
-            polygon.setAttribute("points", "0 0, 14 5, 0 10"); // Scaled up from "0 0, 10 3.5, 0 7"
-            polygon.setAttribute("fill", type.color);
+            polygon.setAttribute("points", "0 0, 28 10, 0 20"); // Scaled up 2x from "0 0, 14 5, 0 10"            polygon.setAttribute("fill", type.color);
             
             marker.appendChild(polygon);
             defs.appendChild(marker);
