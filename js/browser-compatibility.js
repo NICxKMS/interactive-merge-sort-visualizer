@@ -24,7 +24,7 @@ function checkBackdropFilterSupport() {
         style.textContent = `
             /* Safari backdrop-filter fallbacks */
             .control-panel, .info-panel, #stepsOutput, #visualization, .tree-view, .zoom-controls, .node-content {
-                background-color: rgba(20, 20, 20, 0.85) !important; /* More opaque background for Safari */
+                background-color: rgba(0, 0, 0, 0) !important; /* More opaque background for Safari */
             }
         `;
         document.head.appendChild(style);

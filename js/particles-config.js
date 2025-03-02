@@ -345,7 +345,7 @@ function fixMouseInteraction(pJS) {
         pJS.interactivity.mouse.pos_x = canvasX;
         pJS.interactivity.mouse.pos_y = canvasY;
         pJS.interactivity.mouse.click_pos_x = canvasX;
-        pJS.interactivity.mouse.click_pos_y = canvasY;
+        pJS.interactivity.mouse.click_pos_y = canvasX;
         pJS.interactivity.mouse.position_x = canvasX;
         pJS.interactivity.mouse.position_y = canvasY;
         pJS.interactivity.status = 'touchmove';
@@ -508,18 +508,59 @@ function processTrailMode(pJS, mouseX, mouseY) {
 // Initialize particles with WebGL fallback
 function initializeParticlesWithFallback() {
     if (isWebGLAvailable()) {
+        // Ensure critical properties exist before setting them
+        if (!particlesConfig.particles.move) {
+            particlesConfig.particles.move = {};
+        }
+        
+        // Prevent the stack overflow error by modifying the config
+        particlesConfig.particles.move.enable = true;
+        
+        // Ensure number.density exists
+        if (!particlesConfig.particles.number.density) {
+            particlesConfig.particles.number.density = {};
+        }
+        particlesConfig.particles.number.density.enable = false; // Disable density to prevent stack overflow
+        
+        // Rest of the initialization
+        // ...existing code...
+        // Add more initial spacing between particles
+        if (particlesConfig.particles.line_linked) {
+            particlesConfig.particles.line_linked.distance = Math.max(150, particlesConfig.particles.line_linked.distance);
+        }
+        
+        // Initialize and immediately apply the checkOverlap patch
         initializeParticles();
+        patchParticlesJsCheckOverlap();
     } else {
         console.warn("WebGL not supported, using simplified particles config.");
         // Use a simplified config without WebGL dependencies
-        particlesConfig.particles.number.value = 20;
-        particlesConfig.particles.move.speed = 0.5;
-        particlesConfig.interactivity.events.onhover.enable = false;
-        particlesConfig.retina_detect = false;
-        particlesConfig.fps_limit = 30;
+        const fallbackConfig = {
+            particles: {
+                number: { 
+                    value: 20,
+                    density: { enable: false }
+                },
+                move: { 
+                    enable: true,
+                    speed: 0.5,
+                    random: false
+                },
+                size: { value: 3 },
+                opacity: { value: 0.5 }
+            },
+            interactivity: {
+                events: {
+                    onhover: { enable: false }
+                }
+            },
+            retina_detect: false,
+            fps_limit: 30
+        };
         
         try {
-            particlesJS('particles-js', particlesConfig);
+            particlesJS('particles-js', fallbackConfig);
+            patchParticlesJsCheckOverlap();
             console.log("Fallback particles initialized");
         } catch (e) {
             console.error("Fallback particles initialization failed:", e);
@@ -532,6 +573,97 @@ function initializeParticlesWithFallback() {
     }
 }
 
+// Patch the problematic checkOverlap function in particles.js to prevent stack overflow
+function patchParticlesJsCheckOverlap() {
+    if (!window.pJSDom || !window.pJSDom[0] || !window.pJSDom[0].pJS) return;
+    
+    const pJS = window.pJSDom[0].pJS;
+    
+    // Only patch if the vendor functions exist
+    if (pJS.fn && pJS.fn.vendors) {
+        try {
+            // Store original function for reference
+            const originalCheckOverlap = pJS.fn.vendors.checkOverlap;
+            
+            // Replace with a non-recursive version that won't overflow the stack
+            pJS.fn.vendors.checkOverlap = function(p1, position) {
+                // Get all particles array
+                const particles = pJS.particles.array;
+                
+                // Set maximum iterations to prevent infinite loops - reduce from 100 to 30
+                const MAX_ITERATIONS = 30;
+                let iterations = 0;
+                
+                // Check for overlap with existing particles with iteration limit
+                for (let i = 0; i < particles.length && iterations < MAX_ITERATIONS; i++) {
+                    const p2 = particles[i];
+                    
+                    // Skip if comparing with self
+                    if (p2 === p1) continue;
+                    
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // If overlapping, adjust position instead of recursively calling
+                    if (dist <= p1.radius + p2.radius) {
+                        iterations++;
+                        
+                        // Use more randomness for new positions to avoid getting stuck
+                        const angle = Math.random() * Math.PI * 2;
+                        const distance = Math.random() * 50 + (p1.radius + p2.radius);
+                        
+                        // If position was provided, adjust around it; otherwise use random position
+                        if (position) {
+                            // Move in random direction away from collision
+                            p1.x = position.x + Math.cos(angle) * distance;
+                            p1.y = position.y + Math.sin(angle) * distance;
+                        } else {
+                            // Use completely random position within canvas
+                            p1.x = Math.random() * pJS.canvas.w;
+                            p1.y = Math.random() * pJS.canvas.h;
+                        }
+                        
+                        // Don't recursively check again, just continue iteration
+                        if (iterations >= MAX_ITERATIONS) {
+                            // Only log every 10th warning to reduce console spam
+                            if (Math.random() < 0.1) {
+                                console.log('Max overlap check iterations reached, breaking loop');
+                            }
+                            return false; // Return false to stop checking
+                        }
+                        
+                        // Check the new position with the same particle instead of recursive call
+                        i--; // Recheck the same particle with new position
+                    }
+                }
+                
+                return true; // No more overlaps found within iteration limit
+            };
+            
+            // Also patch the particle creation function to add more spacing between particles
+            const originalParticleCreate = pJS.fn.particlesCreate;
+            if (typeof originalParticleCreate === 'function') {
+                pJS.fn.particlesCreate = function() {
+                    // Temporarily increase minimum distance between particles
+                    const originalDistance = pJS.particles.line_linked.distance;
+                    pJS.particles.line_linked.distance *= 1.5;
+                    
+                    // Call the original function
+                    originalParticleCreate.call(this);
+                    
+                    // Restore original distance
+                    pJS.particles.line_linked.distance = originalDistance;
+                };
+            }
+            
+            console.log("Patched particles.js checkOverlap function to prevent stack overflow");
+        } catch (error) {
+            console.error("Failed to patch checkOverlap function:", error);
+        }
+    }
+}
+
 // Optimize particle count based on device performance
 function optimizeParticlesForDevice() {
     // Check if device is likely mobile or low power
@@ -539,8 +671,8 @@ function optimizeParticlesForDevice() {
     const isLowPower = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     if (isMobile || isLowPower) {
-        // Apply mobile configuration
-        Object.assign(particlesConfig, mobileParticlesConfig);
+        // Apply mobile configuration using deep merge instead of shallow merge
+        deepMerge(particlesConfig, mobileParticlesConfig);
         console.log("Applied mobile particle configuration");
     } else {
         // Maintain higher particle count on powerful devices
@@ -557,6 +689,23 @@ function optimizeParticlesForDevice() {
             }
         }
     }
+}
+
+// Helper function to perform a deep merge of objects
+function deepMerge(target, source) {
+    // For each property in source
+    for (const key in source) {
+        // If the property is an object and exists in target, recursively merge
+        if (source[key] && typeof source[key] === 'object' && 
+            target[key] && typeof target[key] === 'object') {
+            deepMerge(target[key], source[key]);
+        } 
+        // Otherwise, just copy the property
+        else {
+            target[key] = source[key];
+        }
+    }
+    return target;
 }
 
 // Function to dynamically reduce particle count for performance
@@ -650,6 +799,154 @@ function setupActivityTracking() {
             pJS.fn.particlesRefresh();
         }
     }, 5000);
+}
+
+// Enhanced function to check particles visibility and handle performance optimization
+function checkParticlesVisibility() {
+    if (!window.pJSDom || !window.pJSDom[0] || !window.pJSDom[0].pJS) return;
+    
+    const particlesContainer = document.getElementById('particles-js');
+    if (!particlesContainer) return;
+    
+    const rect = particlesContainer.getBoundingClientRect();
+    const pJS = window.pJSDom[0].pJS;
+    
+    // If container is outside viewport, pause rendering
+    if (rect.bottom < 0 || rect.top > window.innerHeight) {
+        if (pJS.fn.pause && !pJS._isPaused) {
+            pJS.fn.pause();
+            pJS._isPaused = true;
+            console.log("Particles container not visible, pausing rendering");
+        }
+    } else if (pJS._isPaused && !pJS._pausedForPerformance) {
+        // Only resume if not paused for performance reasons
+        if (pJS.fn.play) {
+            pJS.fn.play();
+            pJS._isPaused = false;
+            console.log("Particles container visible, resuming rendering");
+        }
+    }
+}
+
+// New function to pause particles during heavy operations like scrolling
+function setupPerformanceOptimization() {
+    if (!window.pJSDom || !window.pJSDom[0] || !window.pJSDom[0].pJS) return;
+    
+    const pJS = window.pJSDom[0].pJS;
+    let scrollTimeout;
+    let animationFrameId;
+    
+    // Pause during scroll
+    window.addEventListener('scroll', function() {
+        // Skip if already paused for another reason
+        if (pJS._isPaused && !pJS._pausedForPerformance) return;
+        
+        // Pause particles during scroll
+        if (pJS.fn.pause && !pJS._pausedForPerformance) {
+            pJS.fn.pause();
+            pJS._isPaused = true;
+            pJS._pausedForPerformance = true;
+        }
+        
+        // Clear any existing timeout
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        
+        // Resume after short delay when scrolling stops
+        scrollTimeout = setTimeout(function() {
+            if (pJS._pausedForPerformance) {
+                // Check if still visible before resuming
+                const particlesContainer = document.getElementById('particles-js');
+                if (particlesContainer) {
+                    const rect = particlesContainer.getBoundingClientRect();
+                    if (rect.bottom >= 0 && rect.top <= window.innerHeight) {
+                        pJS.fn.play();
+                        pJS._isPaused = false;
+                        pJS._pausedForPerformance = false;
+                    }
+                }
+            }
+        }, 200); // 200ms delay after scroll stops
+    }, { passive: true }); // Use passive listener for better performance
+    
+    // Pause during other animations with requestAnimationFrame detection
+    const originalRequestAnimationFrame = window.requestAnimationFrame;
+    let activeAnimationFrames = 0;
+    
+    // Monitor animation frame requests to detect heavy animations
+    window.requestAnimationFrame = function(callback) {
+        activeAnimationFrames++;
+        
+        // Wrap the callback to detect when animation frame completes
+        const wrappedCallback = function(timestamp) {
+            activeAnimationFrames--;
+            
+            // If animations are finished, resume particles after delay
+            if (activeAnimationFrames === 0 && pJS._pausedForPerformance) {
+                // Use timeout to prevent immediate resume if more frames are coming
+                clearTimeout(animationFrameId);
+                animationFrameId = setTimeout(() => {
+                    if (activeAnimationFrames === 0 && pJS._pausedForPerformance) {
+                        // Check visibility before resuming
+                        const particlesContainer = document.getElementById('particles-js');
+                        if (particlesContainer) {
+                            const rect = particlesContainer.getBoundingClientRect();
+                            if (rect.bottom >= 0 && rect.top <= window.innerHeight) {
+                                if (pJS.fn.play) {
+                                    pJS.fn.play();
+                                    pJS._isPaused = false;
+                                    pJS._pausedForPerformance = false;
+                                }
+                            }
+                        }
+                    }
+                }, 300);
+            }
+            
+            // Call the original callback
+            return callback(timestamp);
+        };
+        
+        // If many animation frames are active, pause particles
+        if (activeAnimationFrames > 5 && !pJS._pausedForPerformance && !pJS._isPaused && pJS.fn.pause) {
+            pJS.fn.pause();
+            pJS._isPaused = true;
+            pJS._pausedForPerformance = true;
+        }
+        
+        return originalRequestAnimationFrame.call(window, wrappedCallback);
+    };
+    
+    // Monitor CSS animations and transitions
+    document.addEventListener('animationstart', pauseForAnimation, { passive: true });
+    document.addEventListener('transitionstart', pauseForAnimation, { passive: true });
+    
+    function pauseForAnimation() {
+        if (!pJS._pausedForPerformance && !pJS._isPaused && pJS.fn.pause) {
+            pJS.fn.pause();
+            pJS._isPaused = true;
+            pJS._pausedForPerformance = true;
+            
+            // Resume after animation likely completed
+            setTimeout(() => {
+                if (pJS._pausedForPerformance) {
+                    // Check visibility before resuming
+                    const particlesContainer = document.getElementById('particles-js');
+                    if (particlesContainer) {
+                        const rect = particlesContainer.getBoundingClientRect();
+                        if (rect.bottom >= 0 && rect.top <= window.innerHeight) {
+                            if (pJS.fn.play) {
+                                pJS.fn.play();
+                                pJS._isPaused = false;
+                                pJS._pausedForPerformance = false;
+                            }
+                        }
+                    }
+                }
+            }, 500);
+        }
+    }
+    
+    console.log("Performance optimization for particles configured");
 }
 
 // Check if particles container is visible in viewport
@@ -757,6 +1054,29 @@ function setupDynamicColors() {
     }
 }
 
+// Helper function to check particles near the mouse position for interaction highlights
+function checkParticlesForMouseInteraction(pJS, mouseX, mouseY) {
+    if (!pJS || !pJS.particles || !pJS.particles.array) return;
+    
+    const interactionDistance = 100; // Distance for mouse interaction highlight
+    
+    // Iterate through particles and mark those close to the cursor
+    pJS.particles.array.forEach(particle => {
+        const dx = particle.x - mouseX;
+        const dy = particle.y - mouseY;
+        const distance = Math.sqrt(dx*dx + dy*dy);
+        
+        // Mark particles close to mouse cursor for special rendering
+        if (distance < interactionDistance) {
+            // Add a highlight property that can be used during drawing
+            particle.highlighted = true;
+            particle.highlightIntensity = 1 - (distance / interactionDistance);
+        } else {
+            particle.highlighted = false;
+        }
+    });
+}
+
 // Helper to show a visual indicator of cursor detection
 function showCursorDebugIndicator() {
     const indicator = document.createElement('div');
@@ -844,32 +1164,69 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize particles with a delay to prioritize main content
     setTimeout(() => {
-        // Initialize particles with WebGL fallback
-        initializeParticlesWithFallback();
-        
-        // Setup performance monitoring and optimizations
-        setTimeout(() => {
-            if (window.requestAnimationFrame) {
-                // Set up interval for performance monitoring
-                setInterval(optimizeParticles, 5000);
-                
-                // Set up activity tracking for dynamic speed adjustment
-                setupActivityTracking();
-                
-                // Set up dynamic color changes on mouse move
-                setupDynamicColors();
-                
-                // Set up visibility checking for scroll optimization
-                window.addEventListener("scroll", checkParticlesVisibility);
-                // Check initially
-                checkParticlesVisibility();
+        try {
+            // Ensure critical config properties exist
+            if (!particlesConfig.particles) {
+                particlesConfig.particles = {};
+            }
+            if (!particlesConfig.particles.number) {
+                particlesConfig.particles.number = {};
+            }
+            if (!particlesConfig.particles.move) {
+                particlesConfig.particles.move = {};
+            }
+            if (!particlesConfig.particles.size) {
+                particlesConfig.particles.size = {};
             }
             
-            // Enable debug mode if flag is set
-            if (typeof PARTICLES_DEBUG !== 'undefined' && PARTICLES_DEBUG) {
-                debugParticles();
+            // Safe initial configuration to prevent stack overflow
+            particlesConfig.particles.number.density = particlesConfig.particles.number.density || {};
+            particlesConfig.particles.number.density.enable = false;
+            particlesConfig.particles.move.random = true;
+            particlesConfig.particles.number.value = Math.min(60, particlesConfig.particles.number.value || 40);
+            
+            // Increase minimum particle size to reduce chance of overlaps
+            particlesConfig.particles.size.value_min = particlesConfig.particles.size.value_min || 3;
+            particlesConfig.particles.size.value = Math.max(6, particlesConfig.particles.size.value || 6);
+            
+            // Initialize particles with WebGL fallback
+            initializeParticlesWithFallback();
+            
+            // Setup performance monitoring and optimizations
+            setTimeout(() => {
+                if (window.requestAnimationFrame) {
+                    // Set up interval for performance monitoring
+                    setInterval(optimizeParticles, 5000);
+                    
+                    // Set up activity tracking for dynamic speed adjustment
+                    setupActivityTracking();
+                    
+                    // Set up dynamic color changes on mouse move
+                    setupDynamicColors();
+                    
+                    // Set up visibility checking for scroll optimization
+                    window.addEventListener("scroll", checkParticlesVisibility);
+                    
+                    // Set up performance optimization to pause during heavy operations
+                    setupPerformanceOptimization();
+                    
+                    // Check initially
+                    checkParticlesVisibility();
+                }
+                
+                // Enable debug mode if flag is set
+                if (typeof PARTICLES_DEBUG !== 'undefined' && PARTICLES_DEBUG) {
+                    debugParticles();
+                }
+            }, 2000);
+        } catch (error) {
+            console.error("Error initializing particles:", error);
+            // Fallback to blank container if everything fails
+            const particlesContainer = document.getElementById('particles-js');
+            if (particlesContainer) {
+                particlesContainer.style.display = 'none';
             }
-        }, 2000);
+        }
     }, 300);
 });
 
