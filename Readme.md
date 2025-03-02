@@ -2,7 +2,6 @@
 
 <div align="center">
   <img src="https://miro.medium.com/v2/resize:fit:1200/1*X-o4Ng1YsdZg13We3J4q9Q.gif" alt="Merge Sort Banner" width="40%">
-
 <p>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
     <a href="https://www.ecma-international.org/ecma-262/6.0/"><img src="https://img.shields.io/badge/JavaScript-ES6-yellow.svg" alt="JavaScript"></a>
@@ -20,12 +19,19 @@
 <p align="center">
   <a href="#-demo">Demo</a> •
   <a href="#-features">Features</a> •
+  <a href="#-screenshots">Screenshots</a> •
   <a href="#-quick-start">Quick Start</a> •
-  <a href="#-the-algorithm">The Algorithm</a> •
   <a href="#-how-to-use">How To Use</a> •
+  <a href="#-the-algorithm">The Algorithm</a> •
   <a href="#-technologies">Technologies</a> •
   <a href="#-customizing">Customizing</a>
 </p>
+
+## 📖 Introduction
+
+An interactive visualization tool that beautifully showcases the merge sort algorithm in action. Designed with dual tree visualization to separately display both divide and merge phases, this project offers educational value for students learning algorithms while delivering an engaging visual experience with particle effects.
+
+<br>
 
 ## ✨ Demo
 
@@ -39,6 +45,8 @@
   </a>
   <p><i>🎮 Interactive visualization showing both divide and merge phases of the algorithm</i></p>
 </div>
+
+<br>
 
 ## 🌟 Features
 
@@ -70,16 +78,19 @@
 - 🎯 **Accessibility Features** - Keyboard shortcuts and screen reader support
 - 🌙 **Eye-friendly Design** - Dark theme with carefully selected colors
 
+<br>
+
 ## 🖥️ Screenshots
 
-## Desktop View
+### Desktop View
 ![Desktop View](./assets/screenshot/desktop.png)
 
-## Tablet and Mobile View
+### Tablet and Mobile View
 | Tablet View | Mobile View |
 |------------|------------|
 | ![Tablet View](./assets/screenshot/tablet1.png) | ![Mobile View](./assets/screenshot/mobile.png) |
 
+<br>
 
 ## 🚀 Quick Start
 
@@ -115,6 +126,29 @@
    npx http-server -o
    ```
 
+<br>
+
+## 🎮 How to Use
+
+### Control Panel Overview
+
+| Icon | Control | Description |
+|:----:|:--------|:------------|
+| ⚙️ | **Array Size** | Set the number of elements (8-32 recommended) |
+| 🐢 | **Speed Slider** | Adjust animation speed (left=faster, right=slower) |
+| ▶️ | **Start** | Begin the visualization process |
+| ⏸️ | **Pause/Resume** | Toggle animation playback |
+| 🔄 | **Reset** | Generate a new random array |
+| 🔍 | **Zoom Controls** | Examine complex visualizations (+ / - / reset) |
+
+### Navigation Tips
+
+- Use **keyboard shortcuts** for faster control (Space, R, S, +, -)
+- On mobile, use **pinch gestures** to zoom and **swipe** to navigate
+- **Long press** on any node to see detailed information about that step
+
+<br>
+
 ## 🧠 The Algorithm
 
 Merge Sort is a classic divide-and-conquer algorithm that:
@@ -129,59 +163,72 @@ Merge Sort is a classic divide-and-conquer algorithm that:
 2. **Conquer:** Merge sorted subarrays back into larger sorted arrays
 3. **Combine:** Build the final sorted array through successive merges
 
-### 📌 Merge Sort Pseudocode  
+<br>
+
+<details>
+  <br>
+  <summary align="center">
+    <p>
+      <img src="https://img.shields.io/badge/👁️_Click_to_View_Merge_Sort_Pseudocode-0078D7?style=for-the-badge&logo=codeforces&logoColor=white" height="50">
+    </p>
+    <p><i>Click to expand the full algorithm implementation</i></p>
+    <br>
+  </summary>
 
 ```js
-// MERGE SORT MAIN FUNCTION
+// 🚀 MERGE SORT MAIN FUNCTION
 function mergeSort(arr, start, end) {
-    // Base case: single element is already sorted
+    // ✅ Base case: single element is already sorted
     if (start >= end) return;
 
-    // Find the middle point
+    // 🔹 Find the middle point
     let mid = Math.floor((start + end) / 2);
 
-    // Recursively sort first and second halves
+    // 🔄 Recursively sort first and second halves
     mergeSort(arr, start, mid);       // Sort left half
     mergeSort(arr, mid + 1, end);     // Sort right half
 
-    // Merge the sorted halves
+    // 🔀 Merge the sorted halves
     merge(arr, start, mid, end);
 }
 
-// MERGE FUNCTION
+// 🛠 MERGE FUNCTION
 function merge(arr, start, mid, end) {
-    // Create temporary arrays
+    // 📌 Create temporary arrays
     let L = arr.slice(start, mid + 1);    // Left subarray
     let R = arr.slice(mid + 1, end + 1);  // Right subarray
 
-    // Initial indices for left, right and merged arrays
+    // 🔢 Initial indices for left, right, and merged arrays
     let i = 0, j = 0, k = start;
 
-    // Merge the two arrays back into arr[start..end]
+    // 🔄 Merge the two arrays back into arr[start..end]
     while (i < L.length && j < R.length) {
-        if (L[i] <= R[j]) {   // If left element is smaller
+        if (L[i] <= R[j]) {   // ✅ If left element is smaller
             arr[k] = L[i];
             i++;
-        } else {              // If right element is smaller
+        } else {              // ✅ If right element is smaller
             arr[k] = R[j];
             j++;
         }
         k++;
     }
 
-    // Copy remaining elements of L[] if any
+    // ⏩ Copy remaining elements of L[] if any
     while (i < L.length) {
         arr[k] = L[i];
         i++, k++;
     }
 
-    // Copy remaining elements of R[] if any
+    // ⏩ Copy remaining elements of R[] if any
     while (j < R.length) {
         arr[k] = R[j];
         j++, k++;
     }
 }
-``` 
+```
+</details> 
+
+<br>
 
 ### Complexity Analysis
 
@@ -223,66 +270,27 @@ function merge(arr, start, mid, end) {
 - ✅ Stable sorting algorithm (maintains relative order of equal items)
 - ✅ Optimal for external sorting (when data doesn't fit in memory)
 
-### Comparison with Other Algorithms
+<br>
 
-<div align="center">
-  <table>
-    <tr>
-      <th>Algorithm</th>
-      <th>Time Complexity (Avg)</th>
-      <th>Space</th>
-      <th>Stable</th>
-      <th>Best For</th>
-    </tr>
-    <tr>
-      <td>Merge Sort</td>
-      <td>O(n log n)</td>
-      <td>O(n)</td>
-      <td>Yes</td>
-      <td>Large datasets, external sorting</td>
-    </tr>
-    <tr>
-      <td>Quick Sort</td>
-      <td>O(n log n)</td>
-      <td>O(log n)</td>
-      <td>No</td>
-      <td>Internal sorting, average case</td>
-    </tr>
-    <tr>
-      <td>Bubble Sort</td>
-      <td>O(n²)</td>
-      <td>O(1)</td>
-      <td>Yes</td>
-      <td>Small datasets, teaching</td>
-    </tr>
-    <tr>
-      <td>Heap Sort</td>
-      <td>O(n log n)</td>
-      <td>O(1)</td>
-      <td>No</td>
-      <td>Memory-constrained systems</td>
-    </tr>
-  </table>
-</div>
+## 📈 Algorithm Comparison
 
-## 🎮 How to Use
+### Time Complexity
 
-### Control Panel Overview
+| Algorithm | Best | Average | Worst | Memory | Stable |
+|:----------|:----:|:-------:|:-----:|:------:|:------:|
+| **Merge Sort** | n log n | n log n | n log n | O(n) | ✅ |
+| **Quick Sort** | n log n | n log n | n² | O(log n) | ❌ |
+| **Heap Sort** | n log n | n log n | n log n | O(1) | ❌ |
+| **Bubble Sort** | n | n² | n² | O(1) | ✅ |
 
-| Icon | Control | Description |
-|:----:|:--------|:------------|
-| ⚙️ | **Array Size** | Set the number of elements (8-32 recommended) |
-| 🐢 | **Speed Slider** | Adjust animation speed (left=faster, right=slower) |
-| ▶️ | **Start** | Begin the visualization process |
-| ⏸️ | **Pause/Resume** | Toggle animation playback |
-| 🔄 | **Reset** | Generate a new random array |
-| 🔍 | **Zoom Controls** | Examine complex visualizations (+ / - / reset) |
+### Key Strengths by Algorithm
 
-### Navigation Tips
+- **Merge Sort**: 📊 Predictable performance, 🔄 Stable sorting, 💾 External sorting
+- **Quick Sort**: ⚡ Fastest in practice, 🧠 Cache efficient, 🔄 In-place (with stack)
+- **Heap Sort**: 🛡️ Guaranteed performance, 💪 In-place sorting, 🔒 No extra memory
+- **Bubble Sort**: 🔍 Simple implementation, ✅ Detects already sorted data, 🐢 Only good for tiny datasets
 
-- Use **keyboard shortcuts** for faster control (Space, R, S, +, -)
-- On mobile, use **pinch gestures** to zoom and **swipe** to navigate
-- **Long press** on any node to see detailed information about that step
+<br>
 
 ## 🛠️ Technologies
 
@@ -302,6 +310,8 @@ function merge(arr, start, mid, end) {
 - **particles.js** - Interactive background particle system
 - **SVG** - Vector graphics for tree connections and visual elements
 
+<br>
+
 ### Performance Optimizations
 
 <div align="center">
@@ -313,7 +323,7 @@ function merge(arr, start, mid, end) {
     </tr>
     <tr>
       <td>GPU Acceleration</td>
-      <td>Using CSS <code>transform: translate3d</code></td>
+      <td>Using CSS <code>transform: translate3d</td>
       <td>Smooth animations even on complex visualizations</td>
     </tr>
     <tr>
@@ -344,6 +354,8 @@ function merge(arr, start, mid, end) {
   </table>
 </div>
 
+<br>
+
 ## 📂 Project Structure
 
 ```
@@ -367,6 +379,8 @@ merge-sort-visualization/
 └── README.md                    # Project documentation
 ```
 
+<br>
+
 ### Core Components Explained
 
 #### Application Architecture
@@ -387,6 +401,8 @@ merge-sort-visualization/
 3. Bridge captures state → 
 4. Visualization renders changes → 
 5. User observes algorithm in action
+
+<br>
 
 ## 🌐 System Architecture
 
@@ -450,6 +466,8 @@ merge-sort-visualization/
 </tr>
 </table>
 
+<br>
+
 ### Component Details
 
 | Component | Description | Technologies |
@@ -462,6 +480,8 @@ merge-sort-visualization/
 | Rendering System | Draws the visualization elements | SVG, HTML Elements |
 | User Interface | Provides interactive controls | Event Listeners |
 | Particle System | Creates engaging background visuals | particles.js |
+
+<br>
 
 ## 🎯 Core Features
 
@@ -485,6 +505,8 @@ merge-sort-visualization/
   </td>
 </tr>
 </table>
+
+<br>
 
 ## 💡 Advanced Features
 
@@ -535,6 +557,8 @@ merge-sort-visualization/
 </tr>
 </table>
 
+<br>
+
 ## 💡 Educational Benefits
 
 This visualization tool serves as an excellent educational resource for:
@@ -553,23 +577,7 @@ This visualization tool serves as an excellent educational resource for:
 4. Compare the efficiency with other sorting methods
 5. Gain intuition about O(n log n) complexity
 
-## 📈 Algorithm Comparison
-
-### Time Complexity
-
-| Algorithm | Best | Average | Worst | Memory | Stable |
-|:----------|:----:|:-------:|:-----:|:------:|:------:|
-| **Merge Sort** | n log n | n log n | n log n | O(n) | ✅ |
-| **Quick Sort** | n log n | n log n | n² | O(log n) | ❌ |
-| **Heap Sort** | n log n | n log n | n log n | O(1) | ❌ |
-| **Bubble Sort** | n | n² | n² | O(1) | ✅ |
-
-### Key Strengths by Algorithm
-
-- **Merge Sort**: 📊 Predictable performance, 🔄 Stable sorting, 💾 External sorting
-- **Quick Sort**: ⚡ Fastest in practice, 🧠 Cache efficient, 🔄 In-place (with stack)
-- **Heap Sort**: 🛡️ Guaranteed performance, 💪 In-place sorting, 🔒 No extra memory
-- **Bubble Sort**: 🔍 Simple implementation, ✅ Detects already sorted data, 🐢 Only good for tiny datasets
+<br>
 
 ## 🔮 Future Enhancements
 
@@ -618,6 +626,8 @@ This visualization tool serves as an excellent educational resource for:
   </table>
 </div>
 
+<br>
+
 ## ❓ FAQ
 
 <details>
@@ -643,6 +653,8 @@ Yes, this visualization accurately represents the merge sort algorithm's executi
 <br>
 Absolutely! This project is licensed under MIT, which means you can use, modify, and distribute it freely, even for commercial purposes. Attribution is appreciated but not required.
 </details>
+
+<br>
 
 ## 👨‍💻 Contributing
 
@@ -670,6 +682,8 @@ Contributions are welcome! Here's how you can contribute:
 - Update documentation as needed
 - Ensure browser compatibility
 - Test on both desktop and mobile devices
+
+<br>
 
 ## 📅 Version History
 
@@ -703,9 +717,13 @@ Contributions are welcome! Here's how you can contribute:
   </table>
 </div>
 
+<br>
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+<br>
 
 ## 🙏 Acknowledgements
 
@@ -715,6 +733,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Shields.io](https://shields.io) for the status badges
 - [JavaScript.info](https://javascript.info) for excellent resources on modern JS
 - [MDN Web Docs](https://developer.mozilla.org) for comprehensive web development documentation
+
+<br>
 
 ## 📊 Analytics and User Feedback
 
@@ -733,32 +753,44 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 4. **Time complexity visualization** to better understand performance
 5. **Dark/light theme options** for different viewing preferences
 
+<br>
+
 ## 📞 Support
 
 - Documentation: [docs/](docs/)
 - Issues: [GitHub Issues](issues)
 - Email: support@github_Nikhil.com
 
+<br>
+
 ---
 
+<div align="center" style="font-size: 18px;">
+  <p><strong>Made with ❤️ by <a href="https://github.com/NICxKMS">Nikhil Kumar</a></strong></p>
 
-<div align="center">
-  <p>Made with ❤️ by <a href="https://github.com/NICxKMS">Nikhil Kumar</a></p>
-  <p>
+  <p style="margin: 20px 0;">
     <a href="https://github.com/NICxKMS">
-      <img src="https://img.shields.io/github/followers/NICxKMS?label=Follow&style=social" alt="GitHub">
+      <img src="https://img.shields.io/github/followers/NICxKMS?label=Follow&style=social" alt="GitHub" height="28">
     </a>
     <a href="https://twitter.com/NICxKMS">
-      <img src="https://img.shields.io/twitter/follow/NICxKMS?label=Follow&style=social" alt="Twitter">
+      <img src="https://img.shields.io/twitter/follow/NICxKMS?label=Follow&style=social" alt="Twitter" height="28">
+    </a>
+    <a href="https://www.linkedin.com/in/nikhil-kumar-55265b258/">
+      <img src="https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin" alt="LinkedIn" height="28">
     </a>
   </p>
-  <p>
-    <a href="https://www.buymeacoffee.com/NICxKMS" target="_blank">
-      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="40px">
+
+  <p style="margin: 20px 0;">
+    <a href="https://github.com/NICxKMS/merge-sort-visualization/stargazers">
+      <img src="https://img.shields.io/github/stars/NICxKMS/merge-sort-visualization" alt="Stars" height="28">
+    </a>
+    <a href="https://github.com/NICxKMS/merge-sort-visualization/network/members">
+      <img src="https://img.shields.io/github/forks/NICxKMS/merge-sort-visualization" alt="Forks" height="28">
+    </a>
+    <a href="https://github.com/NICxKMS/merge-sort-visualization/issues">
+      <img src="https://img.shields.io/github/issues/NICxKMS/merge-sort-visualization" alt="Issues" height="28">
     </a>
   </p>
+
+  <p style="margin-top: 20px; font-size: 16px;"><strong>© 2024 Nikhil Kumar. All rights reserved.</strong></p>
 </div>
-
-<!-- Replace the image URLs with actual images when you deploy the project -->
-
-<!-- Icons by icons8.com -->
