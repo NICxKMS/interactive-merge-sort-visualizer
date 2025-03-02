@@ -97,24 +97,24 @@ An interactive visualization tool that beautifully showcases the merge sort algo
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/NICxKMS/merge-sort-visualization.git
+   git clone https://github.com/NICxKMS/interactive-merge-sort-visualizer.git
    ```
 2. **Navigate to the project directory:**
 
    ```bash
-   cd merge-sort-visualization
+   cd interactive-merge-sort-visualizer
    ```
-3. **Open `mergesortv.html` in your browser:**
+3. **Open `index.html` in your browser:**
 
    ```bash
    # On Windows
-   start mergesortv.html
+   start index.html
 
    # On macOS
-   open mergesortv.html
+   open index.html
 
    # On Linux
-   xdg-open mergesortv.html
+   xdg-open index.html
    ```
 4. **Alternative: Use a local development server:**
 
@@ -359,9 +359,9 @@ function merge(arr, start, mid, end) {
 ## 📂 Project Structure
 
 ```
-merge-sort-visualization/
+interactive-merge-sort-visualizer/
 │
-├── mergesortv.html              # Main HTML file
+├── index.html              # Main HTML file
 │
 ├── css/
 │   ├── mergesort.css            # Main styling
@@ -696,23 +696,18 @@ Contributions are welcome! Here's how you can contribute:
     </tr>
     <tr>
       <td>1.0.0</td>
-      <td>2023-06-15</td>
+      <td>2025-02-20</td>
       <td>Initial release with core visualization features</td>
     </tr>
     <tr>
       <td>1.1.0</td>
-      <td>2023-07-20</td>
+      <td>2025-02-26</td>
       <td>Added particle effects and tree zooming</td>
     </tr>
     <tr>
       <td>1.2.0</td>
-      <td>2023-08-10</td>
+      <td>2025-03-02</td>
       <td>Enhanced mobile experience and performance optimizations</td>
-    </tr>
-    <tr>
-      <td>1.3.0</td>
-      <td>2023-09-05</td>
-      <td>Added detailed step logging and keyboard shortcuts</td>
     </tr>
   </table>
 </div>
@@ -781,14 +776,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   </p>
 
   <p style="margin: 20px 0;">
-    <a href="https://github.com/NICxKMS/merge-sort-visualization/stargazers">
-      <img src="https://img.shields.io/github/stars/NICxKMS/merge-sort-visualization" alt="Stars" height="28">
+    <a href="https://github.com/NICxKMS/interactive-merge-sort-visualizer/stargazers">
+      <img src="https://img.shields.io/github/stars/NICxKMS/interactive-merge-sort-visualizer" alt="Stars" height="28">
     </a>
-    <a href="https://github.com/NICxKMS/merge-sort-visualization/network/members">
-      <img src="https://img.shields.io/github/forks/NICxKMS/merge-sort-visualization" alt="Forks" height="28">
+    <a href="https://github.com/NICxKMS/interactive-merge-sort-visualizer/network/members">
+      <img src="https://img.shields.io/github/forks/NICxKMS/interactive-merge-sort-visualizer" alt="Forks" height="28">
     </a>
-    <a href="https://github.com/NICxKMS/merge-sort-visualization/issues">
-      <img src="https://img.shields.io/github/issues/NICxKMS/merge-sort-visualization" alt="Issues" height="28">
+    <a href="https://github.com/NICxKMS/interactive-merge-sort-visualizer/issues">
+      <img src="https://img.shields.io/github/issues/NICxKMS/interactive-merge-sort-visualizer" alt="Issues" height="28">
     </a>
   </p>
 
