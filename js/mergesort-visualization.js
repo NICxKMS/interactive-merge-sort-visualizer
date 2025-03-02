@@ -14,13 +14,18 @@ async function updateVisualization(arr, highlightIndices = []) {
             return;
         }
         
+        // Determine if we're on mobile for bar sizing
+        const isMobile = window.innerWidth <= 480;
+        
         arr.forEach((val, idx) => {
             let bar = document.createElement('div');
             bar.className = 'bar';
             if (highlightIndices.includes(idx)) {
                 bar.classList.add('comparing');
             }
-            bar.style.height = (val * 2) + 'px';
+            
+            // Adjust bar height for mobile if needed
+            bar.style.height = (val * (isMobile ? 1.5 : 2)) + 'px';
             
             let label = document.createElement('span');
             label.className = 'barLabel';
@@ -65,9 +70,15 @@ function createTreeNode(array, phase, level) {
     const arrayValues = document.createElement('div');
     arrayValues.className = 'array-values';
     
-    // Adjust text based on array size for better sizing
-    if (array.length > 12) {
-        arrayValues.textContent = `[${array.slice(0, 5).join(', ')}, ... ${array.length - 10} more ..., ${array.slice(-5).join(', ')}]`;
+    // Check if mobile view for more compact display
+    const isMobile = window.innerWidth <= 480;
+    const isTinyScreen = window.innerWidth <= 360;
+    
+    // Adjust text based on array size and device width for better sizing
+    if (array.length > (isMobile ? 5 : 12)) {
+        // Smaller display on mobile with fewer sample values
+        const showItems = isTinyScreen ? 1 : isMobile ? 2 : 5;
+        arrayValues.textContent = `[${array.slice(0, showItems).join(', ')}, ... ${array.length - (showItems*2)} more ..., ${array.slice(-showItems).join(', ')}]`;
         // Add title for hover to see full array
         arrayValues.title = `[${array.join(', ')}]`;
     } else {
@@ -176,22 +187,29 @@ function updateConnectionPosition(connection, parentNode, childNode) {
             }
         }
         
+        // Check if on mobile for special connection handling
+        const isMobile = window.innerWidth <= 480;
+        const isTinyScreen = window.innerWidth <= 360;
+        
+        // Get current scale of the tree container
+        const containerScale = parseFloat(treeContainer.dataset.scale || '1');
+        
         // Get positions relative to the tree container
         const parentRect = parentNode.getBoundingClientRect();
         const childRect = childNode.getBoundingClientRect();
         const containerRect = treeContainer.getBoundingClientRect();
         
-        // Calculate positions relative to the container
-        // Note: since we apply zoom to the container itself, we don't need to adjust for scale here
-        const parentX = parentRect.left - containerRect.left;
-        const parentY = parentRect.top - containerRect.top;
-        const parentWidth = parentRect.width;
-        const parentHeight = parentRect.height;
+        // Calculate positions relative to the container, accounting for the container's scale
+        // This is critical for mobile where we pre-scale the container
+        const parentX = (parentRect.left - containerRect.left) / containerScale;
+        const parentY = (parentRect.top - containerRect.top) / containerScale;
+        const parentWidth = parentRect.width / containerScale;
+        const parentHeight = parentRect.height / containerScale;
         
-        const childX = childRect.left - containerRect.left;
-        const childY = childRect.top - containerRect.top;
-        const childWidth = childRect.width;
-        const childHeight = childRect.height;
+        const childX = (childRect.left - containerRect.left) / containerScale;
+        const childY = (childRect.top - containerRect.top) / containerScale;
+        const childWidth = childRect.width / containerScale;
+        const childHeight = childRect.height / containerScale;
         
         // Position the connection
         connection.style.position = "absolute";
@@ -211,6 +229,11 @@ function updateConnectionPosition(connection, parentNode, childNode) {
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.classList.add('connection-path', connectionType);
         
+        // Add mobile-specific class for thinner connections
+        if (isMobile) {
+            path.classList.add('mobile-path');
+        }
+        
         // Special handling for merge phase - reverse arrow direction
         if (connectionType === 'merge') {
             // For merge phase, draw arrow from child to parent (upward direction)
@@ -219,17 +242,22 @@ function updateConnectionPosition(connection, parentNode, childNode) {
             const parentCenterX = parentX + (parentWidth / 2);
             const parentBottomY = parentY + parentHeight;
             
+            // On mobile, make the path more direct with less curve
             const verticalDistance = childTopY - parentBottomY;
-            const midpointY = parentBottomY + (verticalDistance * 0.5);
+            // Use even straighter paths on mobile for better rendering
+            const midpointY = parentBottomY + (verticalDistance * (isMobile ? (isTinyScreen ? 0.3 : 0.35) : 0.5));
             
-            // Path data with control points for smooth curve (reversed direction)
+            // Path data with better control points for mobile
             const pathData = `M ${childCenterX} ${childTopY} ` + 
                           `C ${childCenterX} ${midpointY}, ` + 
                           `${parentCenterX} ${midpointY}, ` + 
                           `${parentCenterX} ${parentBottomY}`;
             
             path.setAttribute("d", pathData);
-            path.setAttribute("marker-end", `url(#arrowhead-${connectionType})`);
+            
+            // Use the appropriate marker for mobile or desktop
+            const markerSuffix = isMobile ? '-mobile' : '';
+            path.setAttribute("marker-end", `url(#arrowhead-${connectionType}${markerSuffix})`);
         } else {
             // For divide phase and others, keep original top-down arrow direction
             const parentCenterX = parentX + (parentWidth / 2);
@@ -237,25 +265,30 @@ function updateConnectionPosition(connection, parentNode, childNode) {
             const childCenterX = childX + (childWidth / 2);
             const childTopY = childY;
             
+            // On mobile, make the path more direct with less curve
             const verticalDistance = childTopY - parentBottomY;
-            const midpointY = parentBottomY + (verticalDistance * 0.5);
+            // Use even straighter paths on mobile for better rendering
+            const midpointY = parentBottomY + (verticalDistance * (isMobile ? (isTinyScreen ? 0.3 : 0.35) : 0.5));
             
-            // Path data with control points for smooth curve (original direction)
+            // Path data with adjusted control points for mobile
             const pathData = `M ${parentCenterX} ${parentBottomY} ` + 
                           `C ${parentCenterX} ${midpointY}, ` + 
                           `${childCenterX} ${midpointY}, ` + 
                           `${childCenterX} ${childTopY}`;
             
             path.setAttribute("d", pathData);
-            path.setAttribute("marker-end", `url(#arrowhead-${connectionType})`);
+            
+            // Use the appropriate marker for mobile or desktop
+            const markerSuffix = isMobile ? '-mobile' : '';
+            path.setAttribute("marker-end", `url(#arrowhead-${connectionType}${markerSuffix})`);
         }
         
-        // Add animation for new connections
+        // Add animation for new connections - faster on mobile
         if (!connection.hasChildNodes()) {
             const pathLength = path.getTotalLength ? path.getTotalLength() : 500;
             path.style.strokeDasharray = pathLength;
             path.style.strokeDashoffset = pathLength;
-            path.style.animation = "dashoffset 0.5s ease-in-out forwards";
+            path.style.animation = `dashoffset ${isMobile ? '0.3s' : '0.5s'} ease-in-out forwards`;
         }
         
         svg.appendChild(path);

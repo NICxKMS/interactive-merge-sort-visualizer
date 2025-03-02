@@ -1,4 +1,3 @@
-
 /**
  * Bridge module that connects the merge sort algorithm with the visualization
  * Handles the layout algorithm and tree structure management
@@ -55,14 +54,33 @@ function enhanceTreeLayout() {
         // Sort level data by level index for consistent processing
         levelData.sort((a, b) => a.levelIndex - b.levelIndex);
         
-        // Set consistent level heights
+        // Set consistent level heights - adjust spacing based on screen size
+        const isMobile = window.innerWidth <= 480;
+        const isTinyScreen = window.innerWidth <= 360;
+        
         levelData.forEach(data => {
-            const levelSpacing = 50; // Consistent vertical spacing between levels
+            // Adjust level spacing for different screen sizes
+            let levelSpacing;
+            if (isTinyScreen) {
+                levelSpacing = 20; // Smallest spacing for tiny screens
+            } else if (isMobile) {
+                levelSpacing = 30; // Reduced spacing for mobile
+            } else {
+                levelSpacing = 50; // Standard spacing for desktop
+            }
+            
             data.level.style.height = `${data.maxNodeHeight + levelSpacing}px`;
         });
         
-        // Calculate consistent horizontal spacing for all levels
-        const globalMinNodeSpacing = 60; // Minimum spacing between any two nodes
+        // Calculate consistent horizontal spacing for all levels - adjust for screen size
+        let globalMinNodeSpacing;
+        if (isTinyScreen) {
+            globalMinNodeSpacing = 15; // Very tight spacing on tiny screens
+        } else if (isMobile) {
+            globalMinNodeSpacing = 25; // Tighter spacing on mobile
+        } else {
+            globalMinNodeSpacing = 60; // Standard spacing for desktop
+        }
         
         // Create positioning plan with viewport awareness
         const levelPlans = levelData.map(data => {
@@ -77,13 +95,13 @@ function enhanceTreeLayout() {
             const contentWidth = totalNodesWidth + spacingWidth;
             
             // Determine level width - ensure it's at least container width
-            const levelWidth = Math.max(containerWidth, contentWidth + 80);
+            const levelWidth = Math.max(containerWidth, contentWidth + (isMobile ? 40 : 80));
             data.level.style.minWidth = `${levelWidth}px`;
             
             // Calculate positions with improved centering
             const positions = [];
             let startPos = (levelWidth - contentWidth) / 2;
-            if (startPos < 40) startPos = 40; // Minimum padding
+            if (startPos < (isMobile ? 20 : 40)) startPos = (isMobile ? 20 : 40); // Adjusted minimum padding
             
             let currentPos = startPos;
             for (let i = 0; i < nodeCount; i++) {
@@ -133,7 +151,9 @@ function enhanceTreeLayout() {
         const lastLevel = levels[levels.length - 1];
         if (lastLevel) {
             const lastLevelBottom = lastLevel.offsetTop + lastLevel.offsetHeight;
-            container.style.minHeight = `${lastLevelBottom + 100}px`;
+            // Add extra padding at the bottom - less on mobile
+            const bottomPadding = isMobile ? 50 : 100;
+            container.style.minHeight = `${lastLevelBottom + bottomPadding}px`;
         }
     });
 }
@@ -250,11 +270,19 @@ function fixAllLevelOverlaps(levelPlans, minSpacing) {
 function updateLayoutForViewport() {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
+    const isMobile = viewportWidth <= 480;
     
     // Update tree container widths
     [divideTreeContainer, mergeTreeContainer].forEach(container => {
         // Ensure container width is appropriate for viewport
         container.style.width = '100%';
+        
+        // Apply mobile tree class for additional styling
+        if (isMobile) {
+            container.classList.add('mobile-tree');
+        } else {
+            container.classList.remove('mobile-tree');
+        }
         
         // Get all levels in this container
         const levels = container.querySelectorAll('.level');
@@ -264,22 +292,107 @@ function updateLayoutForViewport() {
         });
     });
     
-    // Update tree view heights if needed
-    // const treeViews = document.querySelectorAll('.tree-view');
-    // treeViews.forEach(view => {
-    //     // Set minimum height based on content and viewport
-    //     const contentHeight = view.scrollHeight;
-    //     const minHeight = Math.min(contentHeight, viewportHeight * 0.7);
-    //     view.style.minHeight = `${Math.max(300, minHeight)}px`;
-    // });
+    // Mobile-specific adjustments
+    if (isMobile) {
+        // Optimize for mobile: reduce node spacing
+        window.mobileView = true;
+        
+        // Mobile-specific SVG definitions for arrows - add if not present
+        setupMobileArrowMarkers();
+        
+        // Clear any previous transformations and apply mobile-specific scaling
+        if (!document.querySelector('.mobile-scale-applied')) {
+            setTimeout(() => {
+                // Use smaller initial scale for mobile
+                const mobileInitialScale = viewportWidth <= 360 ? 0.7 : 0.8;
+                
+                // Reset zoom for both trees when on mobile
+                if (divideTreeScale !== mobileInitialScale) {
+                    divideTreeContainer.style.transition = 'transform 0.4s ease';
+                    divideTreeContainer.style.transform = `scale(${mobileInitialScale})`;
+                    divideTreeContainer.dataset.scale = mobileInitialScale.toString();
+                    divideTreeScale = mobileInitialScale;
+                }
+                
+                if (mergeTreeScale !== mobileInitialScale) {
+                    mergeTreeContainer.style.transition = 'transform 0.4s ease';
+                    mergeTreeContainer.style.transform = `scale(${mobileInitialScale})`;
+                    mergeTreeContainer.dataset.scale = mobileInitialScale.toString();
+                    mergeTreeScale = mobileInitialScale;
+                }
+                
+                // Mark as applied
+                const marker = document.createElement('div');
+                marker.className = 'mobile-scale-applied';
+                marker.style.display = 'none';
+                document.body.appendChild(marker);
+                
+                // Update connections after scaling with multiple passes to ensure correct positioning
+                setTimeout(() => {
+                    updateAllConnections();
+                    // Do a second pass after a short delay to catch any late layout adjustments
+                    setTimeout(() => updateAllConnections(), 300);
+                }, 500);
+            }, 100);
+        }
+    } else {
+        // Desktop/tablet view
+        window.mobileView = false;
+        
+        // Clean up mobile marker if exists
+        const marker = document.querySelector('.mobile-scale-applied');
+        if (marker) marker.remove();
+    }
+}
+
+// Create mobile-specific SVG arrow markers
+function setupMobileArrowMarkers() {
+    // Check if mobile markers already exist
+    if (document.getElementById('arrowhead-divide-mobile')) {
+        return;
+    }
     
-    // Update header and controls positioning
-    // const headers = document.querySelectorAll('.tree-view-header');
-    // headers.forEach(header => {
-    //     // Ensure header width matches its container
-    //     const parentWidth = header.parentElement.clientWidth;
-    //     // header.style.width = `calc(${parentWidth}px - 40px)`;
-    // });
+    // Get the existing SVG defs or create new ones if needed
+    let svgDefs = document.querySelector('svg > defs');
+    if (!svgDefs) {
+        // Create new SVG defs element if none exists
+        const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svgElement.style.width = "0";
+        svgElement.style.height = "0";
+        svgElement.style.position = "absolute";
+        
+        svgDefs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+        svgElement.appendChild(svgDefs);
+        document.body.appendChild(svgElement);
+    }
+    
+    // Create smaller markers for mobile view
+    const types = [
+        { id: "arrowhead-divide-mobile", color: "var(--divide-color)" },
+        { id: "arrowhead-merge-mobile", color: "var(--merge-color)" },
+        { id: "arrowhead-leaf-mobile", color: "var(--leaf-color)" },
+        { id: "arrowhead-mobile", color: "#95a5a6" }
+    ];
+    
+    types.forEach(type => {
+        const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+        marker.setAttribute("id", type.id);
+        // Smaller marker size for mobile
+        marker.setAttribute("markerWidth", "18");  // Smaller than desktop
+        marker.setAttribute("markerHeight", "12"); // Smaller than desktop
+        marker.setAttribute("refX", "16");         // Adjusted for mobile
+        marker.setAttribute("refY", "6");          // Adjusted for mobile
+        marker.setAttribute("orient", "auto");
+        marker.setAttribute("markerUnits", "userSpaceOnUse");
+        
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        // Smaller polygon points for mobile arrow
+        polygon.setAttribute("points", "0 0, 18 6, 0 12");
+        polygon.setAttribute("fill", type.color);
+        
+        marker.appendChild(polygon);
+        svgDefs.appendChild(marker);
+    });
 }
 
 // Start sorting process
@@ -305,18 +418,25 @@ async function startSort() {
         enhanceTreeLayout();
         
         // Update connections in stages to ensure layout stabilization
-        // First immediate update
+        // Multiple passes for connections to ensure they're drawn correctly
         updateAllConnections();
         
-        // Second update after a short delay to catch any layout adjustments
+        // Additional updates to catch any layout changes, especially on mobile
+        const isMobile = window.innerWidth <= 480;
+        const updateInterval = isMobile ? 150 : 50; // More frequent updates on mobile
+        
         setTimeout(() => {
             updateAllConnections();
             
-            // Third update after browser has had time to fully render
             setTimeout(() => {
                 updateAllConnections();
-            }, 300);
-        }, 50);
+                
+                // Extra update for mobile
+                if (isMobile) {
+                    setTimeout(() => updateAllConnections(), 300);
+                }
+            }, updateInterval * 2);
+        }, updateInterval);
         
         logStep("Merge Sort Complete! Array is now sorted.", "merge");
         

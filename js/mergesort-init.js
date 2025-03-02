@@ -115,6 +115,28 @@ function setupSvgDefinitions() {
                 transform-origin: top center;
                 transition: transform 0.3s ease-out;
             }
+            
+            /* Mobile path styles */
+            .mobile-path {
+                stroke-width: 2.5px;
+            }
+            
+            /* Fix for mobile connections */
+            @media (max-width: 480px) {
+                .node-connection svg {
+                    overflow: visible !important;
+                }
+                
+                .tree-container {
+                    transform-origin: top center !important;
+                }
+                
+                /* Ensure mobile paths are visible */
+                .connection-path.mobile-path {
+                    stroke-opacity: 0.9;
+                    stroke-width: 2.5px !important;
+                }
+            }
         `;
         document.head.appendChild(style);
         
@@ -123,6 +145,7 @@ function setupSvgDefinitions() {
         svgDefs.style.width = "0";
         svgDefs.style.height = "0";
         svgDefs.style.position = "absolute";
+        svgDefs.setAttribute("id", "svg-defs-container");
         
         const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
         
@@ -137,17 +160,17 @@ function setupSvgDefinitions() {
         types.forEach(type => {
             const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
             marker.setAttribute("id", type.id);
-            // Increase marker size by 40%
-            marker.setAttribute("markerWidth", "28");  // Doubled from 14
-            marker.setAttribute("markerHeight", "20"); // Doubled from 10
-            marker.setAttribute("refX", "24");         // Doubled from 12
-            marker.setAttribute("refY", "10");         // Doubled from 5
+            // Standard size for desktop
+            marker.setAttribute("markerWidth", "28");
+            marker.setAttribute("markerHeight", "20");
+            marker.setAttribute("refX", "24");
+            marker.setAttribute("refY", "10");
             marker.setAttribute("orient", "auto");
             marker.setAttribute("markerUnits", "userSpaceOnUse");
             
             const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-            // Scale up the polygon points for a larger arrow
-            polygon.setAttribute("points", "0 0, 28 10, 0 20"); // Scaled up 2x from "0 0, 14 5, 0 10"            polygon.setAttribute("fill", type.color);
+            polygon.setAttribute("points", "0 0, 28 10, 0 20");
+            polygon.setAttribute("fill", type.color);
             
             marker.appendChild(polygon);
             defs.appendChild(marker);
@@ -308,6 +331,21 @@ function initializeMergeSortVisualizer() {
     // Now call our new initialization functions
     setupTreeContainers();
     initializeVisuals();
+    
+    // Listen for orientation changes on mobile to fix connections
+    window.addEventListener('orientationchange', function() {
+        // Give the browser time to adjust the layout
+        setTimeout(() => {
+            updateLayoutForViewport();
+            enhanceTreeLayout();
+            
+            // Multiple connection updates to ensure proper rendering
+            setTimeout(() => {
+                updateAllConnections();
+                setTimeout(() => updateAllConnections(), 300);
+            }, 200);
+        }, 200);
+    });
 }
 
 // Execute initialization when the DOM is fully loaded

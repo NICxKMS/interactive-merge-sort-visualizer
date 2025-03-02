@@ -1007,3 +1007,116 @@ input[type="number"]:focus {
         width: 120px;
     }
 }
+
+/* Mobile-specific enhancements */
+@media (max-width: 480px) {
+    /* Mobile-optimized node sizes */
+    .node-content {
+        min-width: 70px;
+        max-width: 120px;
+        padding: 6px;
+        font-size: 11px;
+    }
+    
+    .node-text {
+        font-size: 11px;
+        padding-bottom: 3px;
+        margin-bottom: 2px;
+    }
+    
+    .array-values {
+        font-size: 9px;
+        max-height: 40px;
+        overflow-y: auto;
+    }
+    
+    /* Compact tree structure for mobile */
+    .level {
+        margin-bottom: 35px !important;
+    }
+    
+    /* Thinner connections for mobile */
+    .connection-path {
+        stroke-width: 2.5px;
+    }
+    
+    .connection-path.divide {
+        stroke-dasharray: 5,3;
+    }
+    
+    /* Mobile-specific tree layout */
+    .mobile-tree .node {
+        margin: 0 5px;
+    }
+
+    /* Better touch area while keeping visual compact */
+    .node-content:hover {
+        transform: scale(1.15);
+        z-index: 10;
+    }
+    
+    /* Fix for mobile SVG connections */
+    .node-connection, .connection-svg {
+        position: absolute;
+        overflow: visible !important;
+        pointer-events: none;
+    }
+    
+    /* Connection style overrides for mobile */
+    .mobile-path {
+        stroke-opacity: 0.95 !important; /* Ensure visibility */
+    }
+    
+    /* Improve mobile node connection visibility */
+    .mobile-tree .node-connection {
+        z-index: 5;
+    }
+    
+    /* Optimize mobile tree rendering */
+    .mobile-tree {
+        -webkit-transform-style: preserve-3d;
+        transform-style: preserve-3d;
+        will-change: transform;
+        backface-visibility: hidden;
+    }
+    
+    /* Force hardware acceleration for SVG connections on mobile */
+    .mobile-tree .connection-svg {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        backface-visibility: hidden;
+    }
+}
+
+/* Special handling for very small screens */
+@media (max-width: 360px) {
+    .node-content {
+        min-width: 60px;
+        padding: 4px;
+        font-size: 10px;
+    }
+    
+    .node-text {
+        font-size: 10px;
+        padding-bottom: 2px;
+    }
+    
+    /* Ultra compact for very small screens */
+    .level {
+        margin-bottom: 25px !important;
+    }
+    
+    /* Even thinner connections for very small screens */
+    .connection-path {
+        stroke-width: 2px;
+    }
+    
+    .connection-path.divide {
+        stroke-dasharray: 3,2;
+    }
+    
+    /* Further optimizations for SVG on very small screens */
+    .node-connection svg {
+        transform: translateZ(0);
+    }
+}
