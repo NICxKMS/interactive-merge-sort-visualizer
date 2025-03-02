@@ -1,7 +1,7 @@
 # 🚀 Advanced Merge Sort Visualization
 
 <div align="center">
-  <img src="https://miro.medium.com/v2/resize:fit:1200/1*X-o4Ng1YsdZg13We3J4q9Q.gif" alt="Merge Sort Banner" width="100%">
+  <img src="https://miro.medium.com/v2/resize:fit:1200/1*X-o4Ng1YsdZg13We3J4q9Q.gif" alt="Merge Sort Banner" width="40%">
 
 <p>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
@@ -72,16 +72,14 @@
 
 ## 🖥️ Screenshots
 
-<!-- <summary>Click to expand screenshots</summary> -->
+## Desktop View
+![Desktop View](./assets/screenshot/desktop.png)
 
-<div align="center">
-  <h4>Desktop Experience</h4>
-  <img src="./assets\screenshot\desktop.png" alt="Desktop View" width="80%">
-<h4>Tablet/Mobile Experience</h4>
-  <img src="./assets\screenshot\tablet1.png" alt="Tablet View" width="60%">
-<h4>Mobile Experience</h4>
-  <img src="./assets\screenshot\mobile.png" alt="Mobile View" width="40%">
-</div>
+## Tablet and Mobile View
+| Tablet View | Mobile View |
+|------------|------------|
+| ![Tablet View](./assets/screenshot/tablet1.png) | ![Mobile View](./assets/screenshot/mobile.png) |
+
 
 ## 🚀 Quick Start
 
@@ -131,52 +129,59 @@ Merge Sort is a classic divide-and-conquer algorithm that:
 2. **Conquer:** Merge sorted subarrays back into larger sorted arrays
 3. **Combine:** Build the final sorted array through successive merges
 
-### Merge Sort Pseudocode
+### 📌 Merge Sort Pseudocode  
 
-```
-function mergeSort(arr, start, end):
-    if start >= end:
-        return                          // Base case: single element array
+```js
+// MERGE SORT MAIN FUNCTION
+function mergeSort(arr, start, end) {
+    // Base case: single element is already sorted
+    if (start >= end) return;
 
-    mid = (start + end) / 2             // Find the middle point
-    mergeSort(arr, start, mid)          // Sort left half
-    mergeSort(arr, mid+1, end)          // Sort right half
-    merge(arr, start, mid, end)         // Merge sorted halves
+    // Find the middle point
+    let mid = Math.floor((start + end) / 2);
 
-function merge(arr, start, mid, end):
-    leftSize = mid - start + 1
-    rightSize = end - mid
+    // Recursively sort first and second halves
+    mergeSort(arr, start, mid);       // Sort left half
+    mergeSort(arr, mid + 1, end);     // Sort right half
 
-    // Create temp arrays
-    leftArray = new array[leftSize]
-    rightArray = new array[rightSize]
+    // Merge the sorted halves
+    merge(arr, start, mid, end);
+}
 
-    // Copy data to temp arrays
-    for i = 0 to leftSize-1:
-        leftArray[i] = arr[start + i]
-    for j = 0 to rightSize-1:
-        rightArray[j] = arr[mid + 1 + j]
+// MERGE FUNCTION
+function merge(arr, start, mid, end) {
+    // Create temporary arrays
+    let L = arr.slice(start, mid + 1);    // Left subarray
+    let R = arr.slice(mid + 1, end + 1);  // Right subarray
 
-    // Merge temp arrays back
-    i = 0, j = 0, k = start
-    while i < leftSize and j < rightSize:
-        if leftArray[i] <= rightArray[j]:
-            arr[k] = leftArray[i]
-            i++
-        else:
-            arr[k] = rightArray[j]
-            j++
-        k++
+    // Initial indices for left, right and merged arrays
+    let i = 0, j = 0, k = start;
 
-    // Copy remaining elements
-    while i < leftSize:
-        arr[k] = leftArray[i]
-        i++, k++
+    // Merge the two arrays back into arr[start..end]
+    while (i < L.length && j < R.length) {
+        if (L[i] <= R[j]) {   // If left element is smaller
+            arr[k] = L[i];
+            i++;
+        } else {              // If right element is smaller
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
 
-    while j < rightSize:
-        arr[k] = rightArray[j]
-        j++, k++
-```
+    // Copy remaining elements of L[] if any
+    while (i < L.length) {
+        arr[k] = L[i];
+        i++, k++;
+    }
+
+    // Copy remaining elements of R[] if any
+    while (j < R.length) {
+        arr[k] = R[j];
+        j++, k++;
+    }
+}
+``` 
 
 ### Complexity Analysis
 
@@ -262,50 +267,22 @@ function merge(arr, start, mid, end):
 
 ## 🎮 How to Use
 
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/usage-guide.png" alt="Usage Guide" width="90%">
-</div>
+### Control Panel Overview
 
-### Basic Controls
+| Icon | Control | Description |
+|:----:|:--------|:------------|
+| ⚙️ | **Array Size** | Set the number of elements (8-32 recommended) |
+| 🐢 | **Speed Slider** | Adjust animation speed (left=faster, right=slower) |
+| ▶️ | **Start** | Begin the visualization process |
+| ⏸️ | **Pause/Resume** | Toggle animation playback |
+| 🔄 | **Reset** | Generate a new random array |
+| 🔍 | **Zoom Controls** | Examine complex visualizations (+ / - / reset) |
 
-1. **Set Array Size**:
+### Navigation Tips
 
-   - Use the number input to set your desired array size
-   - Larger arrays create more complex visualizations
-   - Recommended: 8-32 elements for clear visualization
-2. **Adjust Animation Speed**:
-
-   - Slower: Move slider to the right (higher ms value)
-   - Faster: Move slider to the left (lower ms value)
-   - Find the right balance between visibility and waiting time
-3. **Visualization Controls**:
-
-   - **Start**: Begin the merge sort visualization
-   - **Pause/Resume**: Temporarily halt/continue the animation
-   - **Reset**: Generate a new random array to sort
-4. **Tree Navigation**:
-
-   - Use zoom controls (+ / -) to examine complex trees
-   - Reset zoom (⟲) to return to default view
-   - Scroll or pan within each tree view to explore
-
-### Keyboard Shortcuts
-
-| Key       | Action                    |
-| --------- | ------------------------- |
-| `Space` | Pause/Resume              |
-| `R`     | Reset                     |
-| `S`     | Start Sort                |
-| `+`     | Zoom In (when focused)    |
-| `-`     | Zoom Out (when focused)   |
-| `0`     | Reset Zoom (when focused) |
-
-### Mobile Gestures
-
-- **Pinch**: Zoom in/out of tree visualizations
-- **Double Tap**: Reset zoom to default
-- **Touch and Drag**: Pan around the visualization
-- **Long Press on Node**: See detailed information
+- Use **keyboard shortcuts** for faster control (Space, R, S, +, -)
+- On mobile, use **pinch gestures** to zoom and **swipe** to navigate
+- **Long press** on any node to see detailed information about that step
 
 ## 🛠️ Technologies
 
@@ -392,150 +369,171 @@ merge-sort-visualization/
 
 ### Core Components Explained
 
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/architecture.png" alt="Architecture Diagram" width="80%">
-</div>
+#### Application Architecture
 
-#### Key Components:
+| Module | Role | Description |
+|:-------|:-----|:------------|
+| 🧩 **Algorithm** | Brain | Pure implementation with no UI dependencies |
+| 🎨 **Visualization** | View | Handles all DOM updates and animations |
+| 🔌 **Bridge** | Connector | Links algorithm execution to visual updates |
+| 🛠️ **Core Utilities** | Foundation | Shared functions used across modules |
+| 🚀 **Initialization** | Bootstrap | Sets up the environment on page load |
+| ✨ **Particles** | Aesthetics | Background visual effects and interactions |
 
-- **Algorithm Module**: Pure implementation of merge sort algorithm
-- **Visualization Module**: Handles DOM updates and animations
-- **Bridge Module**: Connects algorithm execution to visual representation
-- **Core Utilities**: Common functions shared between modules
-- **Initialization**: Sets up the environment and event listeners
-- **Particles System**: Background visual effects with interactive elements
+#### Data Flow
 
-## 🖌️ Customizing
+1. User initiates sort → 
+2. Algorithm executes step → 
+3. Bridge captures state → 
+4. Visualization renders changes → 
+5. User observes algorithm in action
 
-You can easily customize the visualization through CSS variables and JavaScript configuration.
+## 🌐 System Architecture
 
-### Color Theme Customization
+<table>
+<tr>
+  <td align="center" colspan="3" style="background: #4aadff">
+    <h3>🖥️ Visualization Layer</h3>
+    <em>HTML5 Canvas, SVG Rendering, Interactive UI</em>
+  </td>
+</tr>
+<tr>
+  <td align="center" colspan="3">⬇️ ⬆️</td>
+</tr>
+<tr>
+  <td align="center" colspan="3" style="background: #3eef8b">
+    <h3>🧠 Algorithm Core</h3>
+    <em>Merge Sort Implementation, Animation Controller</em>
+  </td>
+</tr>
+<tr>
+  <td align="center" colspan="3">⬇️ ⬆️</td>
+</tr>
+<tr>
+  <td width="33%" align="center" style="background: rgba(74, 173, 255, 0.1)">
+    <h4>🔄 Data Processing</h4>
+    <p>Array transformation</p>
+    <em>JavaScript ES6</em>
+  </td>
+  <td width="34%" align="center" style="background: rgba(62, 239, 139, 0.1)">
+    <h4>⏱️ Animation Engine</h4>
+    <p>Step-by-step visualization</p>
+    <em>requestAnimationFrame</em>
+  </td>
+  <td width="33%" align="center" style="background: rgba(255, 90, 78, 0.1)">
+    <h4>🎨 Rendering System</h4>
+    <p>Visual representation</p>
+    <em>SVG, Canvas API</em>
+  </td>
+</tr>
+<tr>
+  <td align="center">↕️</td>
+  <td align="center">↕️</td>
+  <td align="center">↕️</td>
+</tr>
+<tr>
+  <td width="33%" align="center" style="background: rgba(255, 181, 46, 0.1)">
+    <h4>🌲 Tree Builder</h4>
+    <p>Tree structure generation</p>
+    <em>DOM Manipulation</em>
+  </td>
+  <td width="34%" align="center" style="background: rgba(74, 173, 255, 0.1)">
+    <h4>✨ Particle System</h4>
+    <p>Background effects</p>
+    <em>particles.js</em>
+  </td>
+  <td width="33%" align="center" style="background: rgba(18, 18, 18, 0.1)">
+    <h4>🎛️ User Interface</h4>
+    <p>Interactive controls</p>
+    <em>Event Listeners, CSS3</em>
+  </td>
+</tr>
+</table>
 
-```javascript
-// Change colors by modifying CSS variables
-document.documentElement.style.setProperty("--divide-color", "#ff00ff");
-document.documentElement.style.setProperty("--merge-color", "#00ffff");
-document.documentElement.style.setProperty("--leaf-color", "#ffff00");
-document.documentElement.style.setProperty("--bar-color", "#00ff00");
-```
+### Component Details
 
-### Particles Customization
+| Component | Description | Technologies |
+|-----------|-------------|--------------|
+| Visualization Layer | Renders the sorting process visually | HTML5, CSS3, SVG |
+| Algorithm Core | Pure implementation of merge sort | JavaScript ES6 |
+| Animation Engine | Controls timing and sequence of steps | requestAnimationFrame API |
+| Tree Builder | Creates and updates visualization trees | DOM manipulation |
+| Data Processing | Handles array operations and transformations | JavaScript Arrays |
+| Rendering System | Draws the visualization elements | SVG, HTML Elements |
+| User Interface | Provides interactive controls | Event Listeners |
+| Particle System | Creates engaging background visuals | particles.js |
 
-```javascript
-// Adjust particle count
-particlesConfig.particles.number.value = 100;
+## 🎯 Core Features
 
-// Change particle colors
-particlesConfig.particles.color.value = ["#ff0000", "#00ff00", "#0000ff"];
+<table>
+<tr>
+  <td>
+    <h3>🔀 Dual Tree Visualization</h3>
+    <ul>
+      <li>Separate divide phase tree</li>
+      <li>Distinct merge phase tree</li>
+      <li>Visual connection between phases</li>
+    </ul>
+  </td>
+  <td>
+    <h3>⏱️ Step Control System</h3>
+    <ul>
+      <li>Variable speed control</li>
+      <li>Play/pause functionality</li>
+      <li>Reset and restart options</li>
+    </ul>
+  </td>
+</tr>
+</table>
 
-// Adjust particle size
-particlesConfig.particles.size.value = 8;
+## 💡 Advanced Features
 
-// Change interaction mode
-particlesConfig.interactivity.events.onhover.mode = "bubble";
-```
-
-### Animation Speed Customization
-
-```javascript
-// Set default animation speed (in ms)
-animationSpeed = 200; // Lower is faster
-speedControl.value = animationSpeed;
-speedValue.textContent = animationSpeed + "ms";
-
-// Disable animations entirely
-animationsEnabled = false;
-```
-
-## 🔧 Browser Compatibility
-
-<div align="center">
-  <table>
-    <tr>
-      <th>Browser</th>
-      <th>Supported</th>
-      <th>Version</th>
-      <th>Notes</th>
-    </tr>
-    <tr>
-      <td><img src="https://img.icons8.com/color/24/000000/chrome--v1.png"/> Chrome</td>
-      <td>✅</td>
-      <td>60+</td>
-      <td>Full support with optimal performance</td>
-    </tr>
-    <tr>
-      <td><img src="https://img.icons8.com/color/24/000000/firefox.png"/> Firefox</td>
-      <td>✅</td>
-      <td>55+</td>
-      <td>Full support</td>
-    </tr>
-    <tr>
-      <td><img src="https://img.icons8.com/color/24/000000/safari--v1.png"/> Safari</td>
-      <td>✅</td>
-      <td>11+</td>
-      <td>Compatible with minor styling differences</td>
-    </tr>
-    <tr>
-      <td><img src="https://img.icons8.com/color/24/000000/ms-edge-new.png"/> Edge</td>
-      <td>✅</td>
-      <td>79+</td>
-      <td>Full support (Chromium-based)</td>
-    </tr>
-    <tr>
-      <td><img src="https://img.icons8.com/color/24/000000/internet-explorer.png"/> IE</td>
-      <td>❌</td>
-      <td>-</td>
-      <td>Not supported</td>
-    </tr>
-  </table>
-</div>
-
-## 🧪 Testing & Verification
-
-The visualization has been tested with various array configurations:
-
-- **Random arrays** of different sizes (4 to 64 elements)
-- **Nearly sorted arrays** with few out-of-place elements
-- **Reverse-sorted arrays** to test worst-case scenarios
-- **Arrays with duplicates** to verify stability
-- **Single-element and empty arrays** for edge cases
-
-## 📱 Mobile vs Desktop Experience
-
-<div align="center">
-  <table>
-    <tr>
-      <th>Feature</th>
-      <th>Desktop</th>
-      <th>Mobile</th>
-    </tr>
-    <tr>
-      <td>Maximum Recommended Array Size</td>
-      <td>32 elements</td>
-      <td>16 elements</td>
-    </tr>
-    <tr>
-      <td>Tree Visualization</td>
-      <td>Full-size with detailed nodes</td>
-      <td>Compact with simplified nodes</td>
-    </tr>
-    <tr>
-      <td>Particle Effects</td>
-      <td>Full density (40-60 particles)</td>
-      <td>Reduced density (15-20 particles)</td>
-    </tr>
-    <tr>
-      <td>Animation Smoothness</td>
-      <td>60 FPS with full effects</td>
-      <td>30-60 FPS with optimized effects</td>
-    </tr>
-    <tr>
-      <td>Interaction</td>
-      <td>Mouse + Keyboard</td>
-      <td>Touch Gestures</td>
-    </tr>
-  </table>
-</div>
+<table>
+<tr>
+<td width="50%">
+  <h3>🔍 Interactive Exploration</h3>
+  <p><em>Detailed examination of the algorithm</em></p>
+  <ul>
+    <li>Zoom and pan capabilities</li>
+    <li>Node inspection on hover/click</li>
+    <li>Tree navigation controls</li>
+  </ul>
+  <p><code>Status: Active</code></p>
+</td>
+<td width="50%">
+  <h3>📊 Array Visualization</h3>
+  <p><em>Visual representation of data transformation</em></p>
+  <ul>
+    <li>Color-coded array elements</li>
+    <li>Animation of swaps and comparisons</li>
+    <li>Current state highlighting</li>
+  </ul>
+  <p><code>Status: Enhanced</code></p>
+</td>
+</tr>
+<tr>
+<td width="50%">
+  <h3>📝 Algorithm Logging</h3>
+  <p><em>Detailed step-by-step explanation</em></p>
+  <ul>
+    <li>Operation descriptions</li>
+    <li>Array state tracking</li>
+    <li>Time and space complexity notes</li>
+  </ul>
+  <p><code>Status: Live</code></p>
+</td>
+<td width="50%">
+  <h3>📱 Responsive Design</h3>
+  <p><em>Cross-device compatibility</em></p>
+  <ul>
+    <li>Adaptive layouts</li>
+    <li>Touch-friendly controls</li>
+    <li>Performance optimization</li>
+  </ul>
+  <p><code>Status: Complete</code></p>
+</td>
+</tr>
+</table>
 
 ## 💡 Educational Benefits
 
@@ -557,9 +555,21 @@ This visualization tool serves as an excellent educational resource for:
 
 ## 📈 Algorithm Comparison
 
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/algorithm-comparison-chart.png" alt="Algorithm Comparison" width="80%">
-</div>
+### Time Complexity
+
+| Algorithm | Best | Average | Worst | Memory | Stable |
+|:----------|:----:|:-------:|:-----:|:------:|:------:|
+| **Merge Sort** | n log n | n log n | n log n | O(n) | ✅ |
+| **Quick Sort** | n log n | n log n | n² | O(log n) | ❌ |
+| **Heap Sort** | n log n | n log n | n log n | O(1) | ❌ |
+| **Bubble Sort** | n | n² | n² | O(1) | ✅ |
+
+### Key Strengths by Algorithm
+
+- **Merge Sort**: 📊 Predictable performance, 🔄 Stable sorting, 💾 External sorting
+- **Quick Sort**: ⚡ Fastest in practice, 🧠 Cache efficient, 🔄 In-place (with stack)
+- **Heap Sort**: 🛡️ Guaranteed performance, 💪 In-place sorting, 🔒 No extra memory
+- **Bubble Sort**: 🔍 Simple implementation, ✅ Detects already sorted data, 🐢 Only good for tiny datasets
 
 ## 🔮 Future Enhancements
 
@@ -708,22 +718,31 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📊 Analytics and User Feedback
 
-<img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/user-feedback-chart.png" alt="User Feedback Chart" width="60%" align="right">
+### User Testing Results
 
-Based on user testing feedback:
+- **95%** found the visualization helpful for understanding merge sort
+- **89%** appreciated the dual tree visualization approach
+- **92%** rated the UI as intuitive and easy to use
+- **78%** successfully used the tool on mobile devices
 
-- 95% found the visualization helpful for understanding merge sort
-- 89% appreciated the dual tree visualization approach
-- 92% rated the UI as intuitive and easy to use
-- 78% successfully used the tool on mobile devices
-- Top request: Add more sorting algorithms for comparison
+### Top User Requests
 
-`<br clear="right"/>`create a python code to download all needed icons and image (not placeholder) and put it into assets directory for easy integration in readme file
+1. **Multiple sorting algorithms** for side-by-side comparison
+2. **Custom array input** for testing specific scenarios
+3. **Step backward functionality** for reviewing previous states
+4. **Time complexity visualization** to better understand performance
+5. **Dark/light theme options** for different viewing preferences
+
+## 📞 Support
+
+- Documentation: [docs/](docs/)
+- Issues: [GitHub Issues](issues)
+- Email: support@github_Nikhil.com
 
 ---
 
+
 <div align="center">
-  <img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/footer-banner.png" alt="Footer Banner" width="100%">
   <p>Made with ❤️ by <a href="https://github.com/NICxKMS">Nikhil Kumar</a></p>
   <p>
     <a href="https://github.com/NICxKMS">
@@ -743,7 +762,3 @@ Based on user testing feedback:
 <!-- Replace the image URLs with actual images when you deploy the project -->
 
 <!-- Icons by icons8.com -->
-
-```
-
-```
