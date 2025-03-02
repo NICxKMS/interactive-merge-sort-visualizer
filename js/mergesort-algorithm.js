@@ -1,4 +1,3 @@
-
 /**
  * Merge Sort Algorithm implementation with visualization support
  */
@@ -50,13 +49,16 @@ async function mergeSort(arr, start, end, level = 0) {
     const leftResult = await mergeSort(arr, start, mid, level + 1);
     const rightResult = await mergeSort(arr, mid + 1, end, level + 1);
     
-    // Connect nodes in the divide tree
-    createConnection(divideTreeContainer, divideNode, leftResult.divideNode, true);
-    createConnection(divideTreeContainer, divideNode, rightResult.divideNode, false);
+    // Connect nodes in the divide tree and immediately update for smooth appearance
+    const divideConn1 = createConnection(divideTreeContainer, divideNode, leftResult.divideNode, true);
+    const divideConn2 = createConnection(divideTreeContainer, divideNode, rightResult.divideNode, false);
     
-    // Connect nodes in the merge tree
-    createConnection(mergeTreeContainer, mergeNode, leftResult.mergeNode, true);
-    createConnection(mergeTreeContainer, mergeNode, rightResult.mergeNode, false);
+    // Connect nodes in the merge tree and immediately update for smooth appearance
+    const mergeConn1 = createConnection(mergeTreeContainer, mergeNode, leftResult.mergeNode, true);
+    const mergeConn2 = createConnection(mergeTreeContainer, mergeNode, rightResult.mergeNode, false);
+    
+    // Brief delay to let connections be drawn with animation
+    await sleep(animationSpeed * 0.2);
     
     // Merge the sorted halves
     const merged = await mergeArrays(leftResult.array, rightResult.array);
@@ -79,13 +81,62 @@ async function mergeSort(arr, start, end, level = 0) {
     enhanceTreeLayout();
     
     // Ensure connections are updated after layout changes
-    updateAllConnections();
+    // Only update the affected connections for better performance
+    updateNodeConnections(divideNode, leftResult.divideNode, rightResult.divideNode, 
+                          mergeNode, leftResult.mergeNode, rightResult.mergeNode);
     
     return { 
         divideNode: divideNode, 
         mergeNode: mergeNode, 
         array: merged 
     };
+}
+
+// Optimized function to update specific node connections
+function updateNodeConnections(divideParent, divideLeftChild, divideRightChild, 
+                              mergeParent, mergeLeftChild, mergeRightChild) {
+    // Update divide tree connections
+    if (divideParent && divideLeftChild) {
+        updateSpecificConnection(divideTreeContainer, divideParent, divideLeftChild, true);
+    }
+    if (divideParent && divideRightChild) {
+        updateSpecificConnection(divideTreeContainer, divideParent, divideRightChild, false);
+    }
+    
+    // Update merge tree connections
+    if (mergeParent && mergeLeftChild) {
+        updateSpecificConnection(mergeTreeContainer, mergeParent, mergeLeftChild, true);
+    }
+    if (mergeParent && mergeRightChild) {
+        updateSpecificConnection(mergeTreeContainer, mergeParent, mergeRightChild, false);
+    }
+}
+
+// Update a specific connection with animation
+function updateSpecificConnection(container, parent, child, isLeft) {
+    // Find existing connection or create a new one
+    const connections = container === divideTreeContainer ? 
+        nodeConnections.divide : nodeConnections.merge;
+    
+    let connection = null;
+    
+    // Find the existing connection
+    for (let conn of connections) {
+        if (conn.parent === parent && conn.child === child) {
+            connection = conn.connection;
+            break;
+        }
+    }
+    
+    // If no connection found, create a new one
+    if (!connection) {
+        connection = createConnection(container, parent, child, isLeft);
+    } else {
+        // Update the existing connection
+        updateConnectionPosition(connection, parent, child);
+    }
+    
+    return connection;
 }
 
 // Merge two sorted arrays with visualization
@@ -114,6 +165,8 @@ async function mergeArrays(left, right) {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         mergeSort,
-        mergeArrays
+        mergeArrays,
+        updateNodeConnections,
+        updateSpecificConnection
     };
 }

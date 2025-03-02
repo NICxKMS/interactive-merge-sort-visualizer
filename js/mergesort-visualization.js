@@ -142,8 +142,8 @@ function createConnection(treeContainer, parentNode, childNode, isLeft) {
         // Add the connection to the tree container
         treeContainer.appendChild(connection);
         
-        // Update the connection position
-        updateConnectionPosition(connection, parentNode, childNode);
+        // Update the connection position with animation flag for new connections
+        updateConnectionPosition(connection, parentNode, childNode, true);
         
         // Store the connection information
         const treeType = treeContainer === divideTreeContainer ? 'divide' : 'merge';
@@ -162,7 +162,7 @@ function createConnection(treeContainer, parentNode, childNode, isLeft) {
 }
 
 // Update the position and appearance of a connection between nodes
-function updateConnectionPosition(connection, parentNode, childNode) {
+function updateConnectionPosition(connection, parentNode, childNode, isNew = false) {
     try {
         if (!connection || !parentNode || !childNode || 
             !parentNode.isConnected || !childNode.isConnected) {
@@ -234,6 +234,11 @@ function updateConnectionPosition(connection, parentNode, childNode) {
             path.classList.add('mobile-path');
         }
         
+        // Add animation class if it's a new connection
+        if (isNew) {
+            path.classList.add('new-connection');
+        }
+        
         // Special handling for merge phase - reverse arrow direction
         if (connectionType === 'merge') {
             // For merge phase, draw arrow from child to parent (upward direction)
@@ -283,12 +288,14 @@ function updateConnectionPosition(connection, parentNode, childNode) {
             path.setAttribute("marker-end", `url(#arrowhead-${connectionType}${markerSuffix})`);
         }
         
-        // Add animation for new connections - faster on mobile
-        if (!connection.hasChildNodes()) {
+        // Add animation for new connections - faster on mobile, smoother overall
+        if (!connection.hasChildNodes() || isNew) {
             const pathLength = path.getTotalLength ? path.getTotalLength() : 500;
             path.style.strokeDasharray = pathLength;
             path.style.strokeDashoffset = pathLength;
-            path.style.animation = `dashoffset ${isMobile ? '0.3s' : '0.5s'} ease-in-out forwards`;
+            
+            // Use a class-based animation for smoother appearance
+            path.style.animation = `dashoffset ${isMobile ? '0.3s' : '0.4s'} ease-in-out forwards`;
         }
         
         svg.appendChild(path);
@@ -483,8 +490,8 @@ function updateAllConnections(tree) {
                         conn.connection = connection;
                     }
                     
-                    // Update the connection position
-                    updateConnectionPosition(connection, conn.parent, conn.child);
+                    // Update the connection position - not a new connection for performance
+                    updateConnectionPosition(connection, conn.parent, conn.child, false);
                 }
             });
         } catch (error) {

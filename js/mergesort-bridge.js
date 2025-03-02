@@ -417,26 +417,33 @@ async function startSort() {
         // Final layout enhancement to ensure proper positioning
         enhanceTreeLayout();
         
-        // Update connections in stages to ensure layout stabilization
-        // Multiple passes for connections to ensure they're drawn correctly
+        // Comprehensive connection update sequence for final visualization
+        // First pass - basic update
         updateAllConnections();
         
-        // Additional updates to catch any layout changes, especially on mobile
-        const isMobile = window.innerWidth <= 480;
-        const updateInterval = isMobile ? 150 : 50; // More frequent updates on mobile
-        
+        // Second pass with timing for smoother animation
         setTimeout(() => {
+            // Add transition for smoother appearance
+            document.querySelectorAll('.connection-path').forEach(path => {
+                path.style.transition = 'stroke-dashoffset 0.4s ease-in-out, stroke-width 0.3s ease';
+            });
+            
+            // Update again to ensure all connections are properly positioned
             updateAllConnections();
             
+            // Third pass after layout stabilizes
             setTimeout(() => {
+                // Final update for any remaining adjustments
                 updateAllConnections();
                 
-                // Extra update for mobile
-                if (isMobile) {
-                    setTimeout(() => updateAllConnections(), 300);
-                }
-            }, updateInterval * 2);
-        }, updateInterval);
+                // Remove transitions after animation completes
+                setTimeout(() => {
+                    document.querySelectorAll('.connection-path').forEach(path => {
+                        path.style.transition = '';
+                    });
+                }, 500);
+            }, 200);
+        }, 100);
         
         logStep("Merge Sort Complete! Array is now sorted.", "merge");
         

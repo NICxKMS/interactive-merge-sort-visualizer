@@ -3,11 +3,24 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- Add hardware acceleration meta tags -->
-	<meta name="theme-color" content="#121212"> 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	
+	<!-- Browser compatibility for theme colors -->
+	<!-- Chrome, Edge, Safari, Safari iOS -->
+	<meta name="theme-color" content="#121212">
+	<meta name="msapplication-TileColor" content="#121212">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<!-- Firefox (using color-scheme as alternative) -->
+	<meta name="color-scheme" content="dark">
+	<!-- Opera (using application color as alternative) -->
+	<meta name="application-name" content="Merge Sort Visualization">
+	<meta name="application-color" content="#121212">
+	
 	<title>Merge Sort Visualization</title>
     <link rel="stylesheet" href="css/mergesort.css">
+    <link rel="stylesheet" href="css/particle-effects.css">
+    <!-- Add compatibility script first to handle browser differences -->
+    <script src="js/browser-compatibility.js"></script>
     <!-- Add particles.js library -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 </head>
