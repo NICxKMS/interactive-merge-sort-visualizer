@@ -3,6 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Add hardware acceleration meta tags -->
+	<meta name="theme-color" content="#121212"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Merge Sort Visualization</title>
     <link rel="stylesheet" href="css/mergesort.css">
     <!-- Add particles.js library -->
@@ -107,10 +110,17 @@
 			document.getElementById('resetBtn').addEventListener('click', resetVisualization);
 			document.getElementById('pauseResumeBtn').addEventListener('click', togglePause);
             
-            // Initialize particles with enhanced settings
+            // Initialize particles with GPU-enhanced settings
             setTimeout(function() {
                 try {
-                    // Use the enhanced config settings
+                    // Apply GPU acceleration to canvas
+                    const particlesContainer = document.getElementById('particles-js');
+                    if (particlesContainer) {
+                        particlesContainer.style.transform = 'translate3d(0,0,0)';
+                        particlesContainer.style.willChange = 'transform';
+                    }
+                    
+                    // Use the enhanced config settings with GPU acceleration
                     particlesJS('particles-js', {
                         particles: {
                             number: { value: 100 },
@@ -118,7 +128,14 @@
                                 type: ["circle", "triangle", "edge", "star", "polygon"]
                             },
                             size: { value: 5 },
-                            move: { speed: 1 }, // Default speed
+                            move: { 
+                                speed: 1, // Default speed
+                                attract: {
+                                    enable: false,
+                                    rotateX: 600,
+                                    rotateY: 1200
+                                }
+                            },
                             opacity: { value: 0.7 },
                             line_linked: {
                                 enable: true,
@@ -155,9 +172,23 @@
                                     particles_nb: 5
                                 }
                             }
-                        }
+                        },
+                        retina_detect: true,
+                        fps_limit: 60,
+                        hardware_acceleration: true  // Enable hardware acceleration
                     });
-                    console.log('Enhanced particles initialized');
+                    
+                    // Apply GPU acceleration to canvas element after initialization
+                    setTimeout(() => {
+                        const canvas = document.querySelector('#particles-js canvas');
+                        if (canvas) {
+                            canvas.style.transform = 'translate3d(0,0,0)';
+                            canvas.style.willChange = 'transform';
+                            canvas.style.backfaceVisibility = 'hidden';
+                        }
+                    }, 100);
+                    
+                    console.log('GPU-accelerated particles initialized');
                 } catch (e) {
                     console.error('Particle initialization failed:', e);
                     // Use the config from particles-config.js as fallback
