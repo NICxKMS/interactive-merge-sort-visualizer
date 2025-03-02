@@ -37,10 +37,10 @@ An interactive visualization tool that beautifully showcases the merge sort algo
 
 <div align="center">
 <p align="center">
-  <a href="https://mergesort-visualization-demo.netlify.app" target="_blank" style="text-decoration: none;">
+  <a href="https://nicxkms.github.io/interactive-merge-sort-visualizer/" target="_blank" style="text-decoration: none;">
     <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDV0a3kyZ2EwNDBqMHI3dHczem02cG55eG9zYjZ1YjE1aWlyb2hsaCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/qgQUggAC3Pfv687qPC/giphy.gif" alt="Demo Button" width="200px">
   </a>
-  <a href="https://mergesort-visualization-demo.netlify.app" target="_blank" style="text-decoration: none;">
+  <a href="https://nicxkms.github.io/interactive-merge-sort-visualizer/" target="_blank" style="text-decoration: none;">
   <p align="center">🔗 Live Demo</p>
   </a>
   <p><i>🎮 Interactive visualization showing both divide and merge phases of the algorithm</i></p>
