@@ -1,80 +1,88 @@
-/* Variables - Expanded color palette and effects */
+/* Variables - Expanded color palette and effects with improved contrast */
 :root {
-    /* Existing colors */
-    --divide-color: #e74c3c;
-    --divide-bg: #ffeaea;
-    --merge-color: #2ecc71;
-    --merge-bg: #eafff2;
-    --leaf-color: #f39c12;
-    --leaf-bg: #fff8e1;
-    --bar-color: #3498db;
+    /* Existing color bases */
+    --divide-color: #ff5a4e; /* Brighter red */
+    --divide-bg: rgba(255, 234, 234, 0.4); /* More transparent */
+    --merge-color: #3eef8b; /* Brighter green */
+    --merge-bg: rgba(234, 255, 242, 0.4); /* More transparent */
+    --leaf-color: #ffb52e; /* Brighter orange */
+    --leaf-bg: rgba(255, 248, 225, 0.4); /* More transparent */
+    --bar-color: #4aadff; /* Brighter blue */
     --bar-hover: #2980b9;
     --bar-sorted: #27ae60;
     --bar-comparing: #c0392b;
-    --connector-color: #95a5a6;
+    --connector-color: #cbd4d9; /* Lighter connector */
     
-    /* Enhanced shadows and effects */
-    --shadow: 0 2px 10px rgba(0,0,0,0.1);
-    --shadow-strong: 0 5px 20px rgba(0,0,0,0.15);
-    --shadow-subtle: 0 2px 5px rgba(0,0,0,0.08);
+    /* Enhanced shadows and effects for contrast */
+    --shadow: 0 2px 10px rgba(0,0,0,0.3);
+    --shadow-strong: 0 5px 20px rgba(0,0,0,0.35);
+    --shadow-subtle: 0 2px 5px rgba(0,0,0,0.15);
+    --glow: 0 0 8px rgba(255,255,255,0.6);
     --animation-duration: 0.5s;
     
-    /* New design variables */
-    --page-bg: #f4f7fa;
-    --header-bg: linear-gradient(135deg, #3498db, #2c3e50);
+    /* New design variables - updated for better contrast */
+    --page-bg: #121212; /* Dark background */
+    --header-bg: linear-gradient(135deg, #4aadff, #2c3e50);
     --header-text: #ffffff;
-    --card-bg: #ffffff;
+    --card-bg: rgba(255, 255, 255, 0.05); /* More transparent */
     --card-border-radius: 12px;
-    --panel-bg: rgba(255, 255, 255, 0.95);
-    --accent-color: #3498db;
+    --panel-bg: rgba(25, 25, 25, 0.4); /* More transparent */
+    --accent-color: #4aadff; /* Brighter blue */
+    --text-color: #ffffff; /* Pure white for better contrast */
+    --secondary-text: #e0e0e0; /* Light gray for secondary text */
 }
 
-/* Base Styles - Enhanced */
+/* Particles.js container styling - moved to background */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1; /* Move to background */
+    background-color: var(--page-bg);
+    pointer-events: none;
+}
+
+/* Base Styles - Enhanced for dark theme with better text contrast */
 body {
     font-family: 'Segoe UI', 'Roboto', Tahoma, Geneva, Verdana, sans-serif;
     text-align: center;
     background-color: var(--page-bg);
-    background-image: linear-gradient(135deg, #f9f9f9 0%, #e8eef2 100%);
     margin: 0;
     padding: 20px;
-    color: #333;
+    color: var(--text-color);
     line-height: 1.6;
     position: relative;
     overflow-x: hidden;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* Text shadow for better readability */
 }
 
-/* Add subtle background pattern */
+/* Remove the existing background pattern */
 body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233498db' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: -1;
+    display: none;
 }
 
-/* Main container with improved style */
+/* Main container with improved style - even more transparent */
 .container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(25, 25, 25, 0.3); /* Even more transparent */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     transition: all 0.3s ease;
     animation: fadeIn 0.8s ease-out;
 }
 
-/* Enhanced header styling */
+/* Enhanced header styling with extra glow for visibility */
 h1 {
     color: var(--accent-color);
     font-size: 2.5rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-shadow: 0 0 15px rgba(74, 173, 255, 0.8); /* Stronger glow */
     margin-top: 10px;
     position: relative;
     padding-bottom: 15px;
@@ -99,11 +107,13 @@ h1:after {
     background-size: 300% 100%;
     border-radius: 2px;
     animation: gradientShift 6s ease infinite;
+    box-shadow: 0 0 12px rgba(74, 173, 255, 0.9); /* Stronger glow */
 }
 
 h2, h3 {
-    color: #2c3e50;
+    color: var(--text-color);
     font-weight: 600;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.7); /* Stronger shadow for text */
 }
 
 h3 {
@@ -111,7 +121,7 @@ h3 {
     font-size: 1.3rem;
 }
 
-/* Enhanced Layout and Containers */
+/* Enhanced Layout and Containers - more transparent */
 .control-panel, .info-panel, #stepsOutput, #visualization, .tree-view, .tree-views-container {
     margin: 25px auto;
     width: 92%;
@@ -121,6 +131,10 @@ h3 {
     max-width: 1200px; /* Consistent maximum width */
     margin-left: auto;
     margin-right: auto;
+    background-color: rgba(20, 20, 20, 0.4); /* More transparent */
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Slightly brighter border */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
 .control-panel:hover, .info-panel:hover {
@@ -128,17 +142,12 @@ h3 {
     transform: translateY(-3px);
 }
 
-.info-panel, #stepsOutput, #visualization, .tree-view {
-    background-color: var(--card-bg);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-/* Enhanced info panel */
+/* Enhanced info panel - more transparent */
 .info-panel {
     padding: 20px;
     position: relative;
     overflow: hidden;
-    background: var(--panel-bg);
+    background: rgba(30, 30, 30, 0.4); /* More transparent */
 }
 
 .info-panel:before {
@@ -150,22 +159,24 @@ h3 {
     height: 5px;
     background: linear-gradient(to right, var(--divide-color), var(--merge-color), var(--leaf-color));
     border-radius: var(--card-border-radius) var(--card-border-radius) 0 0;
+    opacity: 0.8;
 }
 
-/* Improved visualization area */
+/* Improved visualization area - more transparent */
 #visualization {
     display: flex;
     align-items: flex-end;
     justify-content: center;
     height: 300px;
     min-height: 300px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     animation: fadeIn 1s ease-out forwards;
     padding: 20px;
+    background-color: rgba(20, 20, 20, 0.3); /* More transparent */
 }
 
-/* Bar Visualization */
+/* Bar Visualization - enhanced glow for visibility */
 .bar {
     background: linear-gradient(to top, var(--bar-color), var(--bar-hover));
     margin: 1px;
@@ -176,11 +187,13 @@ h3 {
                 background 0.3s ease,
                 transform 0.3s ease;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 0 12px rgba(74, 173, 255, 0.7); /* Enhanced glow */
 }
 
 .bar:hover {
     filter: brightness(1.1);
     transform: scaleY(1.05) translateY(-5px);
+    box-shadow: 0 0 20px rgba(74, 173, 255, 0.9); /* Enhanced glow on hover */
 }
 
 .barLabel {
@@ -189,10 +202,11 @@ h3 {
     width: 100%;
     font-size: 10px;
     color: white;
-    text-shadow: 0 0 2px rgba(0,0,0,0.7);
+    text-shadow: 0 0 4px rgba(0,0,0,1); /* Stronger text shadow */
     opacity: 0.8;
     transform: translateY(0);
     transition: opacity 0.3s, transform 0.3s;
+    font-weight: 600; /* Slightly bolder for visibility */
 }
 
 .bar:hover .barLabel {
@@ -204,33 +218,34 @@ h3 {
 
 .sorted {
     background: linear-gradient(to top, var(--merge-color), var(--bar-sorted));
-    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+    box-shadow: 0 0 20px rgba(62, 239, 139, 0.7); /* Enhanced green glow */
 }
 
 .comparing {
     background: linear-gradient(to top, var(--divide-color), var(--bar-comparing));
-    box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+    box-shadow: 0 0 20px rgba(255, 90, 78, 0.7); /* Enhanced red glow */
 }
 
-/* Enhanced steps output */
+/* Enhanced steps output - more transparent with better contrast */
 #stepsOutput {
     padding: 20px;
     height: 150px;
     overflow-y: scroll;
     text-align: left;
     font-size: 12px;
-    background-color: #fafafa;
+    background-color: rgba(25, 25, 25, 0.4); /* More transparent */
     font-family: 'Consolas', 'Monaco', monospace;
     border-left: 4px solid var(--accent-color);
     scrollbar-width: thin;
     scrollbar-color: var(--accent-color) #f0f0f0;
+    color: var(--text-color);
 }
 
 #stepsOutput:empty::before {
     content: 'Steps will appear here during sorting...';
     display: block;
     padding: 15px;
-    color: #95a5a6;
+    color: var(--secondary-text);
     font-style: italic;
     text-align: center;
 }
@@ -245,23 +260,24 @@ h3 {
 }
 
 #stepsOutput::-webkit-scrollbar-track {
-    background-color: #f0f0f0;
+    background-color: rgba(20, 20, 20, 0.3);
 }
 
-/* Step Output Styling */
+/* Step Output Styling - more transparent */
 .step {
     padding: 10px 15px;
     margin: 8px 0;
     border-left: 4px solid var(--bar-color);
-    background-color: rgba(255,255,255,0.7);
+    background-color: rgba(40, 40, 40, 0.5); /* More transparent */
     border-radius: 0 8px 8px 0;
     transition: all 0.3s ease;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     backdrop-filter: blur(2px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .step:hover {
-    background-color: rgba(255,255,255,0.95);
+    background-color: rgba(50, 50, 50, 0.6); /* More transparent on hover */
     transform: translateX(5px);
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -274,14 +290,14 @@ h3 {
     border-left-color: var(--merge-color);
 }
 
-/* Enhanced Control Elements */
+/* Enhanced Control Elements - more transparent */
 .control-panel {
     display: flex;
     justify-content: center;
     gap: 25px;
     flex-wrap: wrap;
     padding: 20px;
-    background: var(--panel-bg);
+    background: rgba(30, 30, 30, 0.4); /* More transparent */
     animation: fadeIn 1s ease-out forwards;
 }
 
@@ -309,12 +325,12 @@ h3 {
 .control-group, .legend-item {
     display: flex;
     align-items: center;
-    background-color: rgba(255,255,255,0.9);
+    background-color: rgba(40, 40, 40, 0.4); /* More transparent */
     padding: 8px 15px;
     border-radius: 25px;
     box-shadow: var(--shadow-subtle);
     transition: all 0.3s ease;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2); /* More visible border */
 }
 
 .control-group:hover, .legend-item:hover {
@@ -325,7 +341,7 @@ h3 {
 .control-group {
     gap: 15px;
     padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(40, 40, 40, 0.4); /* More transparent, darker */
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.4);
 }
@@ -351,6 +367,7 @@ button {
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, 
                 rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
 }
 
 button:before {
@@ -389,6 +406,7 @@ button:hover:after {
 button:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 0 15px rgba(52, 152, 219, 0.5);
 }
 
 button:active {
@@ -406,10 +424,12 @@ button:focus {
     background: linear-gradient(to bottom, var(--merge-color), #27ae60);
     animation: pulse 2s infinite;
     position: relative;
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
 }
 
 #startSortBtn:hover {
     animation: none;
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.7);
 }
 
 #startSortBtn::after {
@@ -443,7 +463,8 @@ button:focus {
 
 label {
     font-weight: 500;
-    color: #2c3e50;
+    color: var(--text-color);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* Text shadow for better readability */
 }
 
 input[type="range"] {
@@ -464,6 +485,8 @@ input[type="range"]::-webkit-slider-thumb {
     box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     cursor: pointer;
     transition: all 0.2s ease;
+    background: white;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
@@ -478,6 +501,9 @@ input[type="number"] {
     text-align: center;
     font-weight: 500;
     transition: all 0.3s ease;
+    background-color: rgba(30, 30, 30, 0.8);
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 input[type="number"]:focus {
@@ -557,6 +583,8 @@ input[type="number"]:focus {
     animation: fadeIn 1.2s ease-out forwards;
     transform-style: preserve-3d;
     perspective: 1000px;
+    background-color: rgba(20, 20, 20, 0.3); /* More transparent */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .tree-view:hover {
@@ -581,6 +609,16 @@ input[type="number"]:focus {
     box-shadow: var(--shadow-subtle);
     left: 20px;
     border-radius: 8px 8px 8px 8px;
+    background-color: rgba(30, 30, 30, 0.5); /* More transparent */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#divideTreeView .tree-view-header {
+    background-color: rgba(231, 76, 60, 0.15); /* Much more transparent */
+}
+
+#mergeTreeView .tree-view-header {
+    background-color: rgba(46, 204, 113, 0.15); /* Much more transparent */
 }
 
 /* Divide tree specific styling */
@@ -673,41 +711,45 @@ input[type="number"]:focus {
     border: 2px solid var(--bar-color);
     border-radius: 8px;
     padding: 10px;
-    background-color: white;
+    background-color: rgba(30, 30, 30, 0.5); /* More transparent */
     min-width: 120px;
     max-width: 200px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, 
                 rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     backdrop-filter: blur(5px);
+    color: var(--text-color);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.9); /* Stronger text shadow */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .node-content:hover {
     transform: scale(1.08) translateZ(10px);
     box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, 
                 rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
 /* Node Phase Styles */
 .divide-phase {
     border-color: var(--divide-color);
-    background-color: var(--divide-bg);
+    background-color: rgba(231, 76, 60, 0.15); /* Much more transparent */
     border-bottom: 4px solid var(--divide-color);
-    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.1);
+    box-shadow: 0 0 12px rgba(255, 90, 78, 0.5); /* Enhanced glow */
 }
 
 .merge-phase {
     border-color: var(--merge-color);
-    background-color: var(--merge-bg);
+    background-color: rgba(46, 204, 113, 0.15); /* Much more transparent */
     border-bottom: 4px solid var(--merge-color);
-    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.1);
+    box-shadow: 0 0 12px rgba(62, 239, 139, 0.5); /* Enhanced glow */
 }
 
 .leaf-node {
     border-color: var(--leaf-color);
-    background-color: var(--leaf-bg);
+    background-color: rgba(243, 156, 18, 0.15); /* Much more transparent */
     border-bottom: 4px solid var(--leaf-color);
-    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.1);
+    box-shadow: 0 0 12px rgba(255, 181, 46, 0.5); /* Enhanced glow */
 }
 
 .node-text {
@@ -716,6 +758,9 @@ input[type="number"]:focus {
     padding-bottom: 5px;
     border-bottom: 1px solid rgba(0,0,0,0.1);
     margin-bottom: 5px;
+    color: var(--text-color);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.9);
+    border-bottom: 1px solid rgba(255,255,255,0.2); /* Brighter border */
 }
 
 .array-values {
@@ -725,6 +770,7 @@ input[type="number"]:focus {
     text-overflow: ellipsis;
     white-space: nowrap;
     transition: all 0.3s ease;
+    color: var(--secondary-text);
 }
 
 .array-values:hover {
@@ -736,6 +782,8 @@ input[type="number"]:focus {
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     padding: 5px;
+    color: var(--text-color);
+    background-color: rgba(50, 50, 50, 0.9); /* Darker on hover */
 }
 
 /* Connection Styling */
@@ -751,27 +799,29 @@ input[type="number"]:focus {
 }
 
 .connection-path {
-    stroke: var(--connector-color);
-    stroke-width: 3.5px;
+    stroke: rgba(203, 212, 217, 0.8); /* Brighter base color */
+    stroke-width: 4px; /* Slightly thicker */
     fill: none;
     stroke-linecap: round;
     pointer-events: none;
     filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.4)); /* Enhanced glow */
 }
 
 .connection-path.divide {
     stroke: var(--divide-color);
     stroke-dasharray: 7,4;
-    filter: drop-shadow(0px 0px 3px rgba(231, 76, 60, 0.3));
+    filter: drop-shadow(0px 0px 6px rgba(255, 90, 78, 0.7)); /* Enhanced glow */
 }
 
 .connection-path.merge {
     stroke: var(--merge-color);
-    filter: drop-shadow(0px 0px 3px rgba(46, 204, 113, 0.3));
+    filter: drop-shadow(0px 0px 6px rgba(62, 239, 139, 0.7)); /* Enhanced glow */
 }
 
 .connection-path.leaf {
     stroke: var(--leaf-color);
+    filter: drop-shadow(0px 0px 6px rgba(255, 181, 46, 0.7)); /* Enhanced glow */
 }
 
 .node-connection {
@@ -792,7 +842,7 @@ input[type="number"]:focus {
     justify-content: center;
     pointer-events: none;
     z-index: 30;
-    background: linear-gradient(to top, rgba(255, 255, 255, 0.9) 50%, transparent);
+    background: linear-gradient(to top, rgba(20, 20, 20, 0.6) 50%, transparent);
     left: 20px;
 }
 
@@ -801,12 +851,12 @@ input[type="number"]:focus {
     display: flex;
     gap: 10px;
     padding: 12px 18px;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(30, 30, 30, 0.5); /* More transparent */
     border-radius: 30px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(200, 200, 200, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
     opacity: 0.85;
     margin: 0 auto;
@@ -827,9 +877,9 @@ input[type="number"]:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.9);
-    color: #333;
-    border: 1px solid #ddd;
+    background: rgba(40, 40, 40, 0.6); /* More transparent */
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     font-weight: bold;
     font-size: 18px;
@@ -838,12 +888,16 @@ input[type="number"]:focus {
     transition: all 0.2s ease;
     backdrop-filter: blur(5px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* Text shadow */
 }
 
 .zoom-btn:hover {
     transform: scale(1.1);
     background: white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: rgba(60, 60, 60, 0.7); /* More transparent */
+    color: white;
+    text-shadow: 0 0 5px rgba(255,255,255,0.5); /* Glow effect on hover */
 }
 
 .zoom-btn:active {
