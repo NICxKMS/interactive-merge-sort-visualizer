@@ -1,7 +1,7 @@
 # 🚀 Advanced Merge Sort Visualization
 
 <div align="center">
-  <img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/banner.png" alt="Merge Sort Banner" width="100%">
+  <img src="https://miro.medium.com/v2/resize:fit:1200/1*X-o4Ng1YsdZg13We3J4q9Q.gif" alt="Merge Sort Banner" width="100%">
 
 <p>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
@@ -30,7 +30,13 @@
 ## ✨ Demo
 
 <div align="center">
-  <img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/demo.gif" alt="Demo GIF" width="80%">
+<p align="center">
+  <a href="https://mergesort-visualization-demo.netlify.app" target="_blank" style="text-decoration: none;">
+    <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDV0a3kyZ2EwNDBqMHI3dHczem02cG55eG9zYjZ1YjE1aWlyb2hsaCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/qgQUggAC3Pfv687qPC/giphy.gif" alt="Demo Button" width="200px">
+  </a>
+  <a href="https://mergesort-visualization-demo.netlify.app" target="_blank" style="text-decoration: none;">
+  <p align="center">🔗 Live Demo</p>
+  </a>
   <p><i>🎮 Interactive visualization showing both divide and merge phases of the algorithm</i></p>
 </div>
 
@@ -40,15 +46,15 @@
   <table>
     <tr>
       <td align="center"><img src="https://img.icons8.com/color/48/000000/split.png"/><br/>Dual Trees</td>
-      <td align="center"><img src="https://img.icons8.com/color/48/000000/slider.png"/><br/>Interactive Controls</td>
+      <td align="center"><img src="https://img.icons8.com/color/48/wacom-tablet.png"/><br/>Interactive Controls</td>
       <td align="center"><img src="https://img.icons8.com/color/48/000000/zoom-in.png"/><br/>Zoom Features</td>
       <td align="center"><img src="https://img.icons8.com/color/48/000000/code.png"/><br/>Step Logs</td>
     </tr>
     <tr>
       <td align="center"><img src="https://img.icons8.com/color/48/000000/particles.png"/><br/>Particles</td>
-      <td align="center"><img src="https://img.icons8.com/color/48/000000/responsive.png"/><br/>Responsive</td>
+      <td align="center"><img src="https://img.icons8.com/arcade/64/media-queries.png"/><br/>Responsive</td>
       <td align="center"><img src="https://img.icons8.com/color/48/000000/speed.png"/><br/>Optimized</td>
-      <td align="center"><img src="https://img.icons8.com/color/48/000000/educational.png"/><br/>Educational</td>
+      <td align="center"><img src="https://img.icons8.com/color/48/teacher.png"/><br/>Educational</td>
     </tr>
   </table>
 </div>
@@ -66,31 +72,15 @@
 
 ## 🖥️ Screenshots
 
-<details>
-<summary>Click to expand screenshots</summary>
+<!-- <summary>Click to expand screenshots</summary> -->
+
 <div align="center">
   <h4>Desktop Experience</h4>
-  <img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/screenshot1.png" alt="Desktop View" width="80%">
-
-<h4>Tablet Experience</h4>
-  <img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/screenshot2.png" alt="Tablet View" width="60%">
-
+  <img src="./assets\screenshot\desktop.png" alt="Desktop View" width="80%">
+<h4>Tablet/Mobile Experience</h4>
+  <img src="./assets\screenshot\tablet1.png" alt="Tablet View" width="60%">
 <h4>Mobile Experience</h4>
-  <img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/screenshot3.png" alt="Mobile View" width="40%">
-
-</div>
-</details>
-
-
-
-## 🎨 Color Theme
-
-<div align="center">
-  <img src="https://via.placeholder.com/80/4aadff/FFFFFF?text=+" alt="Primary" title="#4aadff - Primary"/>
-  <img src="https://via.placeholder.com/80/3eef8b/FFFFFF?text=+" alt="Success" title="#3eef8b - Success"/>
-  <img src="https://via.placeholder.com/80/ff5a4e/FFFFFF?text=+" alt="Danger" title="#ff5a4e - Danger"/>
-  <img src="https://via.placeholder.com/80/ffb52e/FFFFFF?text=+" alt="Warning" title="#ffb52e - Warning"/>
-  <img src="https://via.placeholder.com/80/121212/FFFFFF?text=+" alt="Background" title="#121212 - Background"/>
+  <img src="./assets\screenshot\mobile.png" alt="Mobile View" width="40%">
 </div>
 
 ## 🚀 Quick Start
@@ -132,7 +122,7 @@
 Merge Sort is a classic divide-and-conquer algorithm that:
 
 <div align="center">
-  <img src="https://user-images.githubusercontent.com/NICxKMS/merge-sort-viz/main/merge-sort-diagram.png" alt="Merge Sort Diagram" width="70%">
+  <img src="https://www.simplilearn.com/ice9/free_resources_article_thumb/mergesort/merge_sort-what-img1.png" alt="Merge Sort Diagram" width="70%">
 </div>
 
 ### Algorithm Steps:
@@ -147,26 +137,26 @@ Merge Sort is a classic divide-and-conquer algorithm that:
 function mergeSort(arr, start, end):
     if start >= end:
         return                          // Base case: single element array
-  
+
     mid = (start + end) / 2             // Find the middle point
     mergeSort(arr, start, mid)          // Sort left half
     mergeSort(arr, mid+1, end)          // Sort right half
     merge(arr, start, mid, end)         // Merge sorted halves
-  
+
 function merge(arr, start, mid, end):
     leftSize = mid - start + 1
     rightSize = end - mid
-  
+
     // Create temp arrays
     leftArray = new array[leftSize]
     rightArray = new array[rightSize]
-  
+
     // Copy data to temp arrays
     for i = 0 to leftSize-1:
         leftArray[i] = arr[start + i]
     for j = 0 to rightSize-1:
         rightArray[j] = arr[mid + 1 + j]
-  
+
     // Merge temp arrays back
     i = 0, j = 0, k = start
     while i < leftSize and j < rightSize:
@@ -177,12 +167,12 @@ function merge(arr, start, mid, end):
             arr[k] = rightArray[j]
             j++
         k++
-  
+
     // Copy remaining elements
     while i < leftSize:
         arr[k] = leftArray[i]
         i++, k++
-      
+
     while j < rightSize:
         arr[k] = rightArray[j]
         j++, k++
@@ -423,10 +413,10 @@ You can easily customize the visualization through CSS variables and JavaScript 
 
 ```javascript
 // Change colors by modifying CSS variables
-document.documentElement.style.setProperty('--divide-color', '#ff00ff');
-document.documentElement.style.setProperty('--merge-color', '#00ffff');
-document.documentElement.style.setProperty('--leaf-color', '#ffff00');
-document.documentElement.style.setProperty('--bar-color', '#00ff00');
+document.documentElement.style.setProperty("--divide-color", "#ff00ff");
+document.documentElement.style.setProperty("--merge-color", "#00ffff");
+document.documentElement.style.setProperty("--leaf-color", "#ffff00");
+document.documentElement.style.setProperty("--bar-color", "#00ff00");
 ```
 
 ### Particles Customization
@@ -451,7 +441,7 @@ particlesConfig.interactivity.events.onhover.mode = "bubble";
 // Set default animation speed (in ms)
 animationSpeed = 200; // Lower is faster
 speedControl.value = animationSpeed;
-speedValue.textContent = animationSpeed + 'ms';
+speedValue.textContent = animationSpeed + "ms";
 
 // Disable animations entirely
 animationsEnabled = false;
@@ -753,3 +743,7 @@ Based on user testing feedback:
 <!-- Replace the image URLs with actual images when you deploy the project -->
 
 <!-- Icons by icons8.com -->
+
+```
+
+```
