@@ -123,94 +123,90 @@
 			document.getElementById('resetBtn').addEventListener('click', resetVisualization);
 			document.getElementById('pauseResumeBtn').addEventListener('click', togglePause);
             
-            // Initialize particles with GPU-enhanced settings
+            // Initialize particles with our enhanced configuration
             setTimeout(function() {
-                try {
-                    // Apply GPU acceleration to canvas
-                    const particlesContainer = document.getElementById('particles-js');
-                    if (particlesContainer) {
-                        particlesContainer.style.transform = 'translate3d(0,0,0)';
-                        particlesContainer.style.willChange = 'transform';
+                // Initialize particles with WebGL fallback
+                initializeParticlesWithFallback();
+                
+                // Set up additional interactive features after a short delay
+                setTimeout(() => {
+                    // Fix mouse interaction explicitly
+                    if (window.pJSDom && window.pJSDom[0] && window.pJSDom[0].pJS) {
+                        fixMouseInteraction(window.pJSDom[0].pJS);
                     }
                     
-                    // Use the enhanced config settings with GPU acceleration
-                    particlesJS('particles-js', {
-                        particles: {
-                            number: { value: 100 },
-                            shape: { 
-                                type: ["circle", "triangle", "edge", "star", "polygon"]
-                            },
-                            size: { value: 5 },
-                            move: { 
-                                speed: 1, // Default speed
-                                attract: {
-                                    enable: false,
-                                    rotateX: 600,
-                                    rotateY: 1200
-                                }
-                            },
-                            opacity: { value: 0.7 },
-                            line_linked: {
-                                enable: true,
-                                distance: 120,
-                                color: "#ffffff",
-                                opacity: 0.7,
-                                width: 2.5
-                            }
-                        },
-                        interactivity: {
-                            detect_on: "canvas",
-                            events: {
-                                onhover: {
-                                    enable: true,
-                                    mode: ["grab", "bubble"]
-                                },
-                                onclick: {
-                                    enable: true,
-                                    mode: "push"
-                                }
-                            },
-                            modes: {
-                                grab: {
-                                    distance: 200,
-                                    line_linked: { opacity: 0.6 }
-                                },
-                                bubble: {
-                                    distance: 150,
-                                    size: 8,
-                                    duration: 2,
-                                    opacity: 0.8
-                                },
-                                push: {
-                                    particles_nb: 5
-                                }
-                            }
-                        },
-                        retina_detect: true,
-                        fps_limit: 60,
-                        hardware_acceleration: true  // Enable hardware acceleration
-                    });
+                    // Set up dynamic color changes that respond to mouse proximity
+                    setupDynamicColors();
                     
-                    // Apply GPU acceleration to canvas element after initialization
-                    setTimeout(() => {
-                        const canvas = document.querySelector('#particles-js canvas');
-                        if (canvas) {
-                            canvas.style.transform = 'translate3d(0,0,0)';
-                            canvas.style.willChange = 'transform';
-                            canvas.style.backfaceVisibility = 'hidden';
-                        }
-                    }, 100);
+                    // Set up activity tracking
+                    setupActivityTracking();
                     
-                    console.log('GPU-accelerated particles initialized');
-                } catch (e) {
-                    console.error('Particle initialization failed:', e);
-                    // Use the config from particles-config.js as fallback
-                    if (typeof particlesConfig !== 'undefined') {
-                        particlesJS('particles-js', particlesConfig);
-                    }
-                }
+                    // Set up visibility optimization
+                    window.addEventListener("scroll", checkParticlesVisibility);
+                    checkParticlesVisibility();
+                    
+                    // Set up tab visibility handling
+                    document.addEventListener("visibilitychange", handleVisibilityChange);
+                    
+                    console.log('Enhanced particles initialized with interactive features');
+                    
+                    // Add a hint for users about the interactive particles
+                    showInteractionHint();
+                }, 500);
             }, 100);
 		});
+        
+        // Show a hint to help users discover the particle interaction
+        function showInteractionHint() {
+            const hint = document.createElement('div');
+            hint.textContent = "Move your cursor to interact with particles";
+            hint.style.position = 'fixed';
+            hint.style.bottom = '30px';
+            hint.style.left = '50%';
+            hint.style.transform = 'translateX(-50%)';
+            hint.style.background = 'rgba(0,0,0,0.8)';
+            hint.style.color = 'white';
+            hint.style.padding = '10px 20px';
+            hint.style.borderRadius = '20px';
+            hint.style.fontFamily = 'Arial, sans-serif';
+            hint.style.fontSize = '14px';
+            hint.style.zIndex = '1000';
+            hint.style.opacity = '0';
+            hint.style.transition = 'opacity 0.5s ease';
+            
+            document.body.appendChild(hint);
+            
+            // Show the hint after a short delay
+            setTimeout(() => {
+                hint.style.opacity = '1';
+                
+                // Hide after a few seconds
+                setTimeout(() => {
+                    hint.style.opacity = '0';
+                    
+                    // Remove from DOM after fade out
+                    setTimeout(() => hint.remove(), 500);
+                }, 5000);
+            }, 2000);
+        }
+        
+        // Visibility change handler extracted for cleaner code
+        function handleVisibilityChange() {
+            if (!window.pJSDom || !window.pJSDom[0] || !window.pJSDom[0].pJS) return;
+            
+            const pJS = window.pJSDom[0].pJS;
+            if (document.hidden) {
+                if (pJS.fn.pause) {
+                    pJS.fn.pause();
+                    pJS._tabHidden = true;
+                }
+            } else if (pJS._tabHidden) {
+                if (pJS.fn.play) {
+                    pJS.fn.play();
+                    pJS._tabHidden = false;
+                }
+            }
+        }
 	</script>
 </body>
 </html>
