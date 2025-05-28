@@ -3,8 +3,30 @@
  * Handles rendering, animations, and UI updates.
  */
 
+// Template for cloning bars, initialized once
+let barTemplate = null;
+
+function initializeBarTemplate() {
+    if (!barTemplate) {
+        barTemplate = document.createElement('div');
+        barTemplate.className = 'bar';
+        
+        let label = document.createElement('span');
+        label.className = 'barLabel';
+        barTemplate.appendChild(label);
+    }
+}
+
+// Call initialization early
+initializeBarTemplate();
+
 // Update visualization on the page with highlighting
 async function updateVisualization(arr, highlightIndices = []) {
+    let startTime;
+    if (PERF_LOG_ENABLED) {
+        startTime = performance.now();
+    }
+
     try {
         // Batch update for better performance
         const fragment = document.createDocumentFragment();
@@ -18,8 +40,8 @@ async function updateVisualization(arr, highlightIndices = []) {
         const isMobile = window.innerWidth <= 480;
         
         arr.forEach((val, idx) => {
-            let bar = document.createElement('div');
-            bar.className = 'bar';
+            let bar = barTemplate.cloneNode(true); // Clone the template
+            
             if (highlightIndices.includes(idx)) {
                 bar.classList.add('comparing');
             }
@@ -27,16 +49,22 @@ async function updateVisualization(arr, highlightIndices = []) {
             // Adjust bar height for mobile if needed
             bar.style.height = (val * (isMobile ? 1.5 : 2)) + 'px';
             
-            let label = document.createElement('span');
-            label.className = 'barLabel';
-            label.textContent = val;
-            bar.appendChild(label);
+            // Update label text
+            bar.firstChild.textContent = val; // Assuming label is the first child
+            
             fragment.appendChild(bar);
         });
         
         visualization.innerHTML = '';
         visualization.appendChild(fragment);
         await sleep(animationSpeed);
+
+        if (PERF_LOG_ENABLED) {
+            const endTime = performance.now();
+            // Subtract animationSpeed because it's an artificial delay, not part of the function's work
+            const duration = endTime - startTime - animationSpeed; 
+            console.log(`updateVisualization took ${duration}ms (array size: ${arr.length})`);
+        }
     } catch (error) {
         console.error("Error in updateVisualization:", error);
     }
@@ -44,6 +72,11 @@ async function updateVisualization(arr, highlightIndices = []) {
 
 // Create a tree node with proper styling and unique ID
 function createTreeNode(array, phase, level) {
+    let startTime;
+    if (PERF_LOG_ENABLED) {
+        startTime = performance.now();
+    }
+
     nodeIdCounter++;
     const nodeId = `node-${phase}-${level}-${nodeIdCounter}`;
     
@@ -97,6 +130,11 @@ function createTreeNode(array, phase, level) {
         node.style.transform = 'scale(1)';
     }, 50);
     
+    if (PERF_LOG_ENABLED) {
+        const endTime = performance.now();
+        // The setTimeout for animation is not included in this measurement.
+        console.log(`createTreeNode took ${endTime - startTime}ms (phase: ${phase}, level: ${level})`);
+    }
     return node;
 }
 
@@ -163,6 +201,11 @@ function createConnection(treeContainer, parentNode, childNode, isLeft) {
 
 // Update the position and appearance of a connection between nodes
 function updateConnectionPosition(connection, parentNode, childNode, isNew = false) {
+    let startTime;
+    if (PERF_LOG_ENABLED) {
+        startTime = performance.now();
+    }
+
     try {
         if (!connection || !parentNode || !childNode || 
             !parentNode.isConnected || !childNode.isConnected) {
@@ -302,6 +345,11 @@ function updateConnectionPosition(connection, parentNode, childNode, isNew = fal
         connection.innerHTML = '';
         connection.appendChild(svg);
         
+        if (PERF_LOG_ENABLED) {
+            const endTime = performance.now();
+            // The path animation is separate and not included in this measurement.
+            console.log(`updateConnectionPosition took ${endTime - startTime}ms (new: ${isNew})`);
+        }
     } catch (error) {
         console.error("Error updating connection:", error);
     }

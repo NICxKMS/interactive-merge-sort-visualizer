@@ -4,6 +4,11 @@
 
 // Enhanced merge sort with standard top-down tree visualization for both phases
 async function mergeSort(arr, start, end, level = 0) {
+    let startTime;
+    if (level === 0 && PERF_LOG_ENABLED) {
+        startTime = performance.now();
+    }
+
     if (start >= end) {
         // Leaf node case - single element
         const divideLevel = getLevel(divideTreeContainer, level);
@@ -85,6 +90,11 @@ async function mergeSort(arr, start, end, level = 0) {
     updateNodeConnections(divideNode, leftResult.divideNode, rightResult.divideNode, 
                           mergeNode, leftResult.mergeNode, rightResult.mergeNode);
     
+    if (level === 0 && PERF_LOG_ENABLED) {
+        const endTime = performance.now();
+        console.log(`mergeSort (initial call) took ${endTime - startTime}ms`);
+    }
+    
     return { 
         divideNode: divideNode, 
         mergeNode: mergeNode, 
@@ -141,6 +151,11 @@ function updateSpecificConnection(container, parent, child, isLeft) {
 
 // Merge two sorted arrays with visualization
 async function mergeArrays(left, right) {
+    let startTime;
+    if (PERF_LOG_ENABLED) {
+        startTime = performance.now();
+    }
+
     let result = [];
     let i = 0, j = 0;
     
@@ -156,8 +171,12 @@ async function mergeArrays(left, right) {
     
     // Add remaining elements
     result = result.concat(left.slice(i)).concat(right.slice(j));
-    await sleep(animationSpeed / 2);
+    await sleep(animationSpeed * 0.25); // Reduced delay after merging logic
     
+    if (PERF_LOG_ENABLED) {
+        const endTime = performance.now();
+        console.log(`mergeArrays took ${endTime - startTime}ms (left: ${left.length}, right: ${right.length})`);
+    }
     return result;
 }
 

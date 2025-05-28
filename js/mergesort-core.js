@@ -2,6 +2,26 @@
  * Core utility functions for the merge sort visualization
  */
 
+// --- Global Variables & Flags ---
+const PERF_LOG_ENABLED = true; // Set to false to disable performance logs
+
+// Template for cloning bars, initialized once
+let barTemplateCore = null;
+
+function initializeBarTemplateCore() {
+    if (!barTemplateCore) {
+        barTemplateCore = document.createElement('div');
+        barTemplateCore.className = 'bar';
+        
+        let label = document.createElement('span');
+        label.className = 'barLabel';
+        barTemplateCore.appendChild(label);
+    }
+}
+
+// Call initialization early
+initializeBarTemplateCore();
+
 // Initialize array with random values and visualize bars with labels
 function initArray() {
     array = [];
@@ -17,19 +37,17 @@ function initArray() {
 
 // Modify the existing createBar function to add animation
 function createBar(value) {
-    let bar = document.createElement('div');
-    bar.className = 'bar';
+    let bar = barTemplateCore.cloneNode(true); // Clone the template
     bar.style.height = '0px'; // Start with height 0 for animation
     
-    let label = document.createElement('span');
-    label.className = 'barLabel';
-    label.textContent = value;
-    bar.appendChild(label);
+    // Update label text
+    bar.firstChild.textContent = value; // Assuming label is the first child
+    
     visualization.appendChild(bar);
     
     // Animate the bar height after adding to DOM
     setTimeout(() => {
-        bar.style.height = (value * 2) + 'px';
+        bar.style.height = (value * 2) + 'px'; // Standard height, adjust if mobile logic is needed here
         bar.style.transition = 'height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
     }, 10);
 }
