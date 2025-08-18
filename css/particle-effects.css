@@ -1,6 +1,6 @@
 /* Particle effects for visualization background */
 
-.particles-container {
+#particle-canvas {
   position: fixed;
   top: 0;
   left: 0;
