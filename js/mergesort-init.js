@@ -5,6 +5,7 @@
 
 // State variables for the visualization
 let array = [];
+let bars = [];
 let animationSpeed = 300;
 let isPaused = false;
 let pausePromiseResolve = null;
@@ -52,22 +53,21 @@ function setupScrollHandlers() {
 
 // Enhanced window resize handler
 function setupResizeHandler() {
-    let resizeTimeout = null;
-    window.addEventListener('resize', () => {
-        if (resizeTimeout) clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            // Update layout based on new viewport size
-            updateLayoutForViewport();
-            
-            // Enhance tree layout
-            enhanceTreeLayout();
-            
-            // Update connections after layout changes
-            setTimeout(() => {
-                updateAllConnections();
-            }, 100);
-        }, 100);
+    var lastResize = 0;
+    window.addEventListener('resize', function(){
+      var now = Date.now();
+      if(now - lastResize > 100){
+        lastResize = now;
+        requestAnimationFrame(applyResize);
+      }
     });
+}
+
+function applyResize(){
+  // current resize logic
+  updateLayoutForViewport();
+  enhanceTreeLayout();
+  updateAllConnections();
 }
 
 // Setup event listeners for controls

@@ -5,6 +5,7 @@
 // Initialize array with random values and visualize bars with labels
 function initArray() {
     array = [];
+    bars = [];
     visualization.innerHTML = '';
     const arraySize = parseInt(arraySizeControl.value);
     
@@ -26,6 +27,7 @@ function createBar(value) {
     label.textContent = value;
     bar.appendChild(label);
     visualization.appendChild(bar);
+    bars.push(bar);
     
     // Animate the bar height after adding to DOM
     setTimeout(() => {
@@ -57,6 +59,7 @@ function logStep(message, phase = '') {
 // Reset visualization with proper cleanup
 function resetVisualization() {
     array = [];
+    bars = [];
     visualization.innerHTML = '';
     stepsOutput.innerHTML = '';
     divideTreeContainer.innerHTML = '';

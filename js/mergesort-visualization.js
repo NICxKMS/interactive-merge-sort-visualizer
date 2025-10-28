@@ -3,11 +3,32 @@
  * Handles rendering, animations, and UI updates.
  */
 
+var pendingChanges = [];
+
+function updateBar(idx, value){
+    pendingChanges.push({i: idx, value: value});
+}
+
+function applyBarChanges(){
+    for(var k = 0; k < pendingChanges.length; k++){
+        var c = pendingChanges[k];
+        bars[c.i].style.height = c.value + "px";
+    }
+    pendingChanges = [];
+}
+
+// main draw loop
+function draw(){
+    applyBarChanges();
+    requestAnimationFrame(draw);
+}
+
+requestAnimationFrame(draw);
+
 // Update visualization on the page with highlighting
 async function updateVisualization(arr, highlightIndices = []) {
     try {
         // Batch update for better performance
-        const fragment = document.createDocumentFragment();
         
         if (!Array.isArray(arr)) {
             console.error("Invalid array provided to updateVisualization");
@@ -17,25 +38,18 @@ async function updateVisualization(arr, highlightIndices = []) {
         // Determine if we're on mobile for bar sizing
         const isMobile = window.innerWidth <= 480;
         
-        arr.forEach((val, idx) => {
-            let bar = document.createElement('div');
-            bar.className = 'bar';
+        bars.forEach((bar, idx) => {
             if (highlightIndices.includes(idx)) {
                 bar.classList.add('comparing');
+            } else {
+                bar.classList.remove('comparing');
             }
-            
-            // Adjust bar height for mobile if needed
-            bar.style.height = (val * (isMobile ? 1.5 : 2)) + 'px';
-            
-            let label = document.createElement('span');
-            label.className = 'barLabel';
-            label.textContent = val;
-            bar.appendChild(label);
-            fragment.appendChild(bar);
+        });
+
+        arr.forEach((val, idx) => {
+            updateBar(idx, (val * (isMobile ? 1.5 : 2)));
         });
         
-        visualization.innerHTML = '';
-        visualization.appendChild(fragment);
         await sleep(animationSpeed);
     } catch (error) {
         console.error("Error in updateVisualization:", error);
