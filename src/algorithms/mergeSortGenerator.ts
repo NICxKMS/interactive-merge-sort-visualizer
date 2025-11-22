@@ -8,8 +8,8 @@ export type TreeNode = {
   values: number[];
   type: 'divide' | 'merge' | 'leaf';
   status: 'active' | 'visited' | 'sorted';
-  x?: number; // Position hints
-  y?: number;
+  x: number; // Precise X position
+  y: number; // Precise Y position
 };
 
 export type SortingFrame = {
@@ -26,6 +26,18 @@ export const generateMergeSortFrames = (initialArray: number[]): SortingFrame[] 
   const frames: SortingFrame[] = [];
   const treeNodes: TreeNode[] = [];
 
+  // Spacing constant to match BarChart
+  const ITEM_SPACING = 1.4;
+  const TOTAL_WIDTH = initialArray.length * ITEM_SPACING;
+  const CENTER_OFFSET = TOTAL_WIDTH / 2;
+
+  // Helper to calculate X position based on subarray range
+  const getXPos = (start: number, end: number) => {
+    const centerIndex = (start + end) / 2;
+    // 0.5 accounts for the center of the bar itself
+    return (centerIndex * ITEM_SPACING) - CENTER_OFFSET + (ITEM_SPACING / 2);
+  };
+
   // Helper to push a new frame
   const pushFrame = (
     array: number[],
@@ -39,26 +51,35 @@ export const generateMergeSortFrames = (initialArray: number[]): SortingFrame[] 
       array: [...array],
       comparingIndices: [...comparing],
       sortedIndices: [...sorted],
-      treeNodes: JSON.parse(JSON.stringify(treeNodes)), // Deep copy to preserve history
+      treeNodes: JSON.parse(JSON.stringify(treeNodes)), // Deep copy
       activeNodeId,
       log,
       phase
     });
   };
 
-  // Initial State
   pushFrame(initialArray, [], [], null, 'Starting Merge Sort...', 'idle');
 
   const mergeSort = (
     arr: number[],
     startIdx: number,
     depth: number,
-    parentId: string | null,
-    xPos: number // simple x-coordinate logic for tree layout
+    parentId: string | null
   ): { sorted: number[], nodeId: string } => {
 
     const nodeId = generateId();
     const isLeaf = arr.length <= 1;
+    const endIdx = startIdx + arr.length - 1;
+
+    // TREE LAYOUT LOGIC
+    // X: Centered on the subarray it represents
+    // Y: Divide tree goes UP, Merge tree goes DOWN? Or Separate?
+    // Let's put Divide Tree ABOVE (Positive Y) and Merge Tree BELOW (Negative Y)
+    // relative to a center line.
+    // Or: Divide tree at Top, Merge tree at Bottom.
+
+    const xPos = getXPos(startIdx, endIdx);
+    const yPos = 15 - (depth * 2.5); // Start high, go down
 
     const node: TreeNode = {
       id: nodeId,
@@ -68,30 +89,16 @@ export const generateMergeSortFrames = (initialArray: number[]): SortingFrame[] 
       type: isLeaf ? 'leaf' : 'divide',
       status: 'active',
       x: xPos,
-      y: depth * -2 // Visual depth
+      y: yPos
     };
 
     treeNodes.push(node);
 
-    pushFrame(
-      initialArray, // The main array visualization often stays static during divide or we can animate it.
-                    // For this viz, we will keep the main array reflecting the current actual state of the sort.
-                    // But during divide, the array doesn't change.
-      [],
-      [],
-      nodeId,
-      `Dividing subarray [${arr.join(', ')}]`,
-      'divide'
-    );
+    pushFrame(initialArray, [], [], nodeId, `Dividing subarray [${arr.join(', ')}]`, 'divide');
 
     if (arr.length <= 1) {
-      // Base case
-      pushFrame(initialArray, [], [], nodeId, `Reached leaf node [${arr[0]}]`, 'divide');
-
-      // Mark as visited/ready to merge
       const n = treeNodes.find(n => n.id === nodeId);
       if (n) n.status = 'visited';
-
       return { sorted: arr, nodeId };
     }
 
@@ -99,112 +106,93 @@ export const generateMergeSortFrames = (initialArray: number[]): SortingFrame[] 
     const leftArr = arr.slice(0, mid);
     const rightArr = arr.slice(mid);
 
-    // Recursive calls
-    // We can try to calculate X positions. Root is 0.
-    // Children are at x - offset and x + offset. Offset reduces with depth.
-    const offset = 10 / (depth + 1);
-
-    mergeSort(leftArr, startIdx, depth + 1, nodeId, xPos - offset);
-    mergeSort(rightArr, startIdx + mid, depth + 1, nodeId, xPos + offset);
+    mergeSort(leftArr, startIdx, depth + 1, nodeId);
+    mergeSort(rightArr, startIdx + mid, depth + 1, nodeId);
 
     // MERGE PHASE
-    const mergedArr: number[] = [];
-    let i = 0, j = 0;
-    let k = startIdx; // Index in the main array
-
-    // Create a Merge Node
+    // Create a distinct "Merge Node" in a separate tree structure?
+    // Or replicate the tree structure mirrored?
+    // Let's mirror it below.
     const mergeNodeId = generateId();
+    const mergeYPos = -5 - (depth * 2.5); // Start below bars and go down
+
     const mergeNode: TreeNode = {
       id: mergeNodeId,
-      parentId: nodeId, // Visually connects back to the divide node or replaces it?
-                        // In dual tree, this is a separate tree.
-                        // For simplicity in 3D, let's spawn a "Merge Node" at the same position as the Divide Node but maybe different color/shape?
-                        // Or we update the existing Divide Node to be a Merge Node.
+      parentId: nodeId, // This connects to the divide node visually?
+                        // Actually, in dual tree, merge nodes connect to THEIR parents (other merge nodes).
+                        // But here we are building recursively.
+                        // A merge node's parent is the merge node of the caller?
+                        // We need to track the parent merge node ID.
+                        // For visualization simplicity, let's connect Merge Node to its Divide counterpart?
+                        // No, that looks messy.
+                        // Let's just position them. We can fix connections in the View component
+                        // by finding the parent based on structure (checking depth-1 and overlapping range).
+                        // OR: We can just say parentId is the Divide Node for now to show the link?
+                        // Let's set parentId to null for now and handle connections in the view logic
+                        // or try to pass the parent Merge ID down?
+                        // Since we are recursing, we don't have the parent merge node created yet!
+                        // Actually we do, but we are in the child call.
+                        // The parent call creates the parent merge node AFTER children return.
+                        // So children merge nodes are created BEFORE parent merge node.
+                        // Connections go UP.
       depth: depth,
-      values: [], // Will fill as we merge
+      values: [],
       type: 'merge',
       status: 'active',
       x: xPos,
-      y: (depth * -2) - 10 // Render merge tree below? Or maybe just change the existing node.
-                           // Let's create a new node for the "Merge Tree" visualization.
+      y: mergeYPos
     };
-    // Actually, updating the existing node type is cleaner for a single tree view that transforms.
-    // But the requirement is "Dual Tree".
-    // Let's add a separate merge node.
-    mergeNode.y = (depth * 2) + 5; // Position merge tree below or inverted.
-    treeNodes.push(mergeNode);
 
+    treeNodes.push(mergeNode);
     pushFrame(initialArray, [], [], mergeNodeId, `Merging subarrays...`, 'merge');
 
+    // Perform Merge
+    const mergedArr: number[] = [];
+    let i = 0, j = 0;
+    let k = startIdx;
+
     while (i < leftArr.length && j < rightArr.length) {
-      pushFrame(
-        initialArray,
-        [startIdx + i, startIdx + mid + j], // Highlighting elements being compared in main array
-        [],
-        mergeNodeId,
-        `Comparing ${leftArr[i]} and ${rightArr[j]}`,
-        'merge'
-      );
+      pushFrame(initialArray, [startIdx + i, startIdx + mid + j], [], mergeNodeId, `Comparing ${leftArr[i]} vs ${rightArr[j]}`, 'merge');
 
       if (leftArr[i] <= rightArr[j]) {
         mergedArr.push(leftArr[i]);
-        initialArray[k] = leftArr[i]; // Update main array in place for visualization
-        i++;
+        initialArray[k++] = leftArr[i++];
       } else {
         mergedArr.push(rightArr[j]);
-        initialArray[k] = rightArr[j];
-        j++;
+        initialArray[k++] = rightArr[j++];
       }
 
-      // Update the merge node's values to show progress
+      // Update node value
       const mNode = treeNodes.find(n => n.id === mergeNodeId);
       if (mNode) mNode.values = [...mergedArr];
 
-      pushFrame(
-        initialArray,
-        [k], // Highlight the position being filled
-        [],
-        mergeNodeId,
-        `Placed ${initialArray[k]} at index ${k}`,
-        'merge'
-      );
-
-      k++;
+      pushFrame(initialArray, [k-1], [], mergeNodeId, `Placed ${initialArray[k-1]}`, 'merge');
     }
 
     while (i < leftArr.length) {
       mergedArr.push(leftArr[i]);
-      initialArray[k] = leftArr[i];
-
+      initialArray[k++] = leftArr[i++];
       const mNode = treeNodes.find(n => n.id === mergeNodeId);
       if (mNode) mNode.values = [...mergedArr];
-
-      pushFrame(initialArray, [k], [], mergeNodeId, `Copying remaining ${leftArr[i]}`, 'merge');
-      i++; k++;
+      pushFrame(initialArray, [k-1], [], mergeNodeId, `Copying ${leftArr[i-1]}`, 'merge');
     }
 
     while (j < rightArr.length) {
       mergedArr.push(rightArr[j]);
-      initialArray[k] = rightArr[j];
-
+      initialArray[k++] = rightArr[j++];
       const mNode = treeNodes.find(n => n.id === mergeNodeId);
       if (mNode) mNode.values = [...mergedArr];
-
-      pushFrame(initialArray, [k], [], mergeNodeId, `Copying remaining ${rightArr[j]}`, 'merge');
-      j++; k++;
+      pushFrame(initialArray, [k-1], [], mergeNodeId, `Copying ${rightArr[j-1]}`, 'merge');
     }
 
-    // Mark merge node as sorted
     const mNode = treeNodes.find(n => n.id === mergeNodeId);
     if (mNode) mNode.status = 'sorted';
-
-    pushFrame(initialArray, [], [], mergeNodeId, `Merged segment: [${mergedArr.join(', ')}]`, 'merge');
+    pushFrame(initialArray, [], [], mergeNodeId, `Merged: [${mergedArr.join(', ')}]`, 'merge');
 
     return { sorted: mergedArr, nodeId: mergeNodeId };
   };
 
-  mergeSort(initialArray, 0, 0, null, 0);
-
+  mergeSort(initialArray, 0, 0, null);
   pushFrame(initialArray, [], initialArray.map((_, i) => i), null, 'Sort Complete!', 'completed');
 
   return frames;
